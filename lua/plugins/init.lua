@@ -115,8 +115,27 @@ return {
     build = "cd app && npx --yes yarn install",
     keys = { { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>", desc = "markdown browser preview" } },
   },
+  -- Parsers to install. Both `:TSInstallAll` and NvChad's `build` step read the
+  -- *raw* spec.opts, which is this fragment on its own: NvChad's own `opts` is a
+  -- function that discards incoming fragments (the same trap as blink above), so
+  -- the two lists never merge and whichever side is read wins outright. NvChad's
+  -- defaults are therefore repeated here -- drop them and they stop installing.
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = { ensure_installed = { "markdown", "markdown_inline", "yaml", "html" } },
+    opts = {
+      ensure_installed = {
+        -- NvChad defaults
+        "lua",
+        "luadoc",
+        "printf",
+        "vim",
+        "vimdoc",
+        -- markdown notes
+        "html",
+        "markdown",
+        "markdown_inline",
+        "yaml",
+      },
+    },
   },
 }
