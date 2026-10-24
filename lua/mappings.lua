@@ -27,6 +27,26 @@ map("n", "<leader>?k", function()
   vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ")
 end, { desc = "whichkey query lookup" })
 
+-- <leader>b -- buffers (were the bare <leader>b and <leader>x)
+unmap("n", "<leader>b")
+unmap("n", "<leader>x")
+
+-- `:enew` reuses the current buffer when it is empty, unnamed and unmodified,
+-- so it cannot open a second scratch buffer -- create one explicitly instead.
+map("n", "<leader>bn", function()
+  vim.api.nvim_set_current_buf(vim.api.nvim_create_buf(true, false))
+end, { desc = "buffer new" })
+
+map("n", "<leader>bd", function()
+  require("nvchad.tabufline").close_buffer()
+end, { desc = "buffer close" })
+
+map("n", "<leader>bD", function()
+  local buf = vim.api.nvim_get_current_buf()
+  vim.bo[buf].modified = false
+  require("nvchad.tabufline").close_buffer(buf)
+end, { desc = "buffer close (discard changes)" })
+
 -- <leader>c -- code (was <leader>fm, which sat under the find group)
 unmap({ "n", "x" }, "<leader>fm")
 
