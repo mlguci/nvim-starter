@@ -56,6 +56,10 @@ end, { desc = "general format file" })
 
 map({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP code action" })
 
+-- <leader>f -- find (marks moved off <leader>m, now the markdown group)
+unmap("n", "<leader>ma")
+map("n", "<leader>fm", "<cmd>Telescope marks<CR>", { desc = "telescope find marks" })
+
 -- <leader>g -- git (was <leader>cm, which sat under the cheatsheet group)
 unmap("n", "<leader>cm")
 map("n", "<leader>gc", "<cmd>Telescope git_commits<CR>", { desc = "telescope git commits" })
@@ -66,3 +70,17 @@ unmap("n", "<leader>rn")
 
 map("n", "<leader>un", "<cmd>set nu!<CR>", { desc = "toggle line number" })
 map("n", "<leader>ur", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
+
+map({ "n", "t" }, "<A-m>", function()
+  if vim.t.restore_cmd then
+    vim.cmd(vim.t.restore_cmd)
+    vim.t.restore_cmd = nil
+  else
+    vim.t.restore_cmd = vim.fn.winrestcmd()
+    vim.cmd("wincmd _ | wincmd |")
+  end
+end, { desc = "window toggle maximize" })
+
+-- easy ways to quit our nvim relationship
+map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "quit all" })
+map("n", "<leader>qQ", "<cmd>qa!<cr>", { desc = "quit all (discard changes)" })
