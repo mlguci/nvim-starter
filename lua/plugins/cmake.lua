@@ -78,6 +78,16 @@ return {
       { "<leader>cma", "<cmd>CMakeLaunchArgs<cr>", desc = "cmake set launch args" },
       { "<leader>cmc", "<cmd>CMakeClean<cr>", desc = "cmake clean" },
       { "<leader>cmo", "<cmd>CMakeOpenExecutor<cr>", desc = "cmake open build output" },
+      -- One keystroke to clear away both panels a failed build leaves behind.
+      -- Either half is a no-op when its window is already shut, so this is safe
+      -- to lean on whether one, both or neither is open, and from inside either
+      -- of them. The runner's terminal is deliberately not included: it may
+      -- still hold a program waiting on input.
+      {
+        "<leader>cmq",
+        "<cmd>cclose<cr><cmd>CMakeCloseExecutor<cr>",
+        desc = "cmake close build windows",
+      },
       { "<leader>cmx", "<cmd>CMakeStopExecutor<cr>", desc = "cmake stop build" },
       { "<leader>cms", "<cmd>CMakeSettings<cr>", desc = "cmake settings" },
     },

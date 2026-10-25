@@ -62,7 +62,7 @@ return {
         { "<leader>a", group = "Claude", mode = { "n", "v" } }, -- aa, ab, ac, ad, af, as (as is visual)
         { "<leader>b", group = "Buffers" }, -- bd, bD, bn
         { "<leader>c", group = "Code", mode = { "n", "x" } }, -- ca, cf
-        -- cma, cmb, cmB, cmc, cmd, cmg, cmo, cmp, cmP, cmr, cmR, cms, cmt, cmT, cmx
+        -- cma, cmb, cmB, cmc, cmd, cmg, cmo, cmp, cmP, cmq, cmr, cmR, cms, cmt, cmT, cmx
         { "<leader>cm", group = "CMake" },
         { "<leader>C", group = "Chezmoi" }, -- Ca, Cd, Ce, Cf
         -- db, dB, dc, de, di, dl, do, dO, dr, dt, du (nvim-dap) and ds (diagnostics).
