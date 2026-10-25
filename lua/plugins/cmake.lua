@@ -94,9 +94,19 @@ return {
         direction = "bottom",
         min_height = 15,
         max_height = 25,
-        -- 1 is the collapsed summary -- a build is usually either running or
-        -- done, and the output worth reading went to the quickfix list.
-        default_detail = 1,
+
+        -- Give <C-q> back to the global quit-all map in lua/mappings.lua, for
+        -- exactly the reason the telescope spec in lua/plugins/init.lua does:
+        -- a buffer-local mapping always beats a global one, and "quit from
+        -- anywhere, unconditionally" is not true if the task list is an
+        -- exception. Overseer binds it to "open task output in the quickfix",
+        -- which is the one action here that is already redundant -- the
+        -- on_output_quickfix component in lua/configs/cmake.lua has put the
+        -- build's errors there before the list is ever opened.
+        --
+        -- `false` removes a default keymap; overseer's own config comment
+        -- documents that, and its merge keeps the rest of the defaults.
+        keymaps = { ["<C-q>"] = false },
       },
     },
   },
