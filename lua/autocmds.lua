@@ -52,9 +52,20 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter", "TermOpen" }, {
       return
     end
 
+    -- A terminal buffer is not always something you can type into. Overseer
+    -- renders task output with nvim_open_term, which produces a terminal buffer
+    -- with no process behind it -- a read-only log. Terminal mode in front of a
+    -- dead channel swallows every normal-mode key and answers none of them, so
+    -- these must never be put into it, and must be taken *out* of it when we
+    -- arrive from a terminal that was (entering a terminal buffer from terminal
+    -- mode otherwise stays in terminal mode, per the comment below). termopen()
+    -- sets b:terminal_job_id and nvim_open_term does not, which is the only
+    -- reliable way to tell the two apart -- buftype is "terminal" for both.
+    local typeable = vim.b[ev.buf].terminal_job_id ~= nil
+
     -- A terminal nobody has left yet (just opened, or unhidden) defaults to
     -- terminal mode, which is where every way of opening one already starts.
-    if vim.b[ev.buf].term_insert ~= false then
+    if typeable and vim.b[ev.buf].term_insert ~= false then
       vim.cmd.startinsert()
     elseif vim.fn.mode() == "t" then
       -- Stepping straight from one terminal into another keeps terminal mode:
