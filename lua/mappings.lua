@@ -76,6 +76,10 @@ unmap("n", "<leader>gt")
 -- <leader>th was the theme picker, which moves to the UI toggles group below)
 unmap("n", "<leader>h")
 unmap("n", "<leader>v")
+-- <leader>pt was a terminal picker; <leader>p is now the Projects group, so this
+-- unmap is also what keeps <leader>pp and friends reachable -- a mapping sitting
+-- on a prefix shadows the whole group behind it, the same trap the <leader>cm
+-- comment above describes.
 unmap("n", "<leader>pt")
 unmap("n", "<leader>th")
 
@@ -170,3 +174,63 @@ end
 -- is a picker prompt, which binds <C-q> buffer-locally -- Telescope's copy is
 -- switched off in lua/plugins/init.lua.
 map({ "n", "i", "x", "s", "o", "c", "t" }, "<C-q>", quit_all, { desc = "quit all (unconditional)" })
+
+-- <leader>f -- find, re-anchored. NvChad's three search maps run telescope
+-- against cwd, which is only the project as long as nvim was started from the
+-- project root and never left it. Routed through project.root() they answer the
+-- same question the build does: <leader>ff in a file opened by absolute path from
+-- an unrelated shell searches that file's project, not the shell's directory.
+--
+-- `cwd` and not `search_dirs`: telescope's `cwd` is what both find_files and
+-- live_grep run their external command in, so rg and fd report paths relative to
+-- the root and the results stay readable. The other five maps in the group are
+-- left alone -- buffers, help tags, oldfiles, marks and the current buffer are
+-- all either global or already buffer-scoped, so a root would mean nothing to
+-- them.
+unmap("n", "<leader>ff")
+unmap("n", "<leader>fa")
+unmap("n", "<leader>fw")
+
+map("n", "<leader>ff", function()
+  require("telescope.builtin").find_files { cwd = require("project").root() }
+end, { desc = "telescope find files" })
+
+map("n", "<leader>fa", function()
+  require("telescope.builtin").find_files {
+    cwd = require("project").root(),
+    follow = true,
+    no_ignore = true,
+    hidden = true,
+  }
+end, { desc = "telescope find all files" })
+
+map("n", "<leader>fw", function()
+  require("telescope.builtin").live_grep { cwd = require("project").root() }
+end, { desc = "telescope live grep" })
+
+-- <leader>p -- projects. The rest of the group is keys on the snacks and
+-- persistence specs in lua/plugins/project.lua; this one stays here because it
+-- drags in no plugin at all -- the same reason the two chezmoi maps above do.
+--
+-- Worth having beside <leader>pp: the switch is for changing projects, this is for
+-- the case where nvim was simply started in the wrong directory. It moves cwd
+-- without touching the layout, which is what the statusline, nvim-tree's
+-- sync_root_with_cwd and cmake-tools' DirChanged handler all key off.
+map("n", "<leader>pr", function()
+  require("project").cd_root()
+end, { desc = "project cd to root" })
+
+-- Highest value per line in the whole group: switching projects is usually a
+-- round trip -- go look at the library, come back -- and this is the trip back
+-- without going through the picker to find where you were.
+map("n", "<leader>pb", function()
+  require("project").back()
+end, { desc = "project switch back" })
+
+-- The escape hatch. A session that names a file which has since been deleted
+-- aborts partway through :source and leaves a half-built layout, and without this
+-- the only fix is deleting a file out of stdpath("state") by hand. <C-d> in the
+-- picker does the same for a project other than this one.
+map("n", "<leader>pD", function()
+  require("project").delete_session(vim.uv.cwd())
+end, { desc = "project delete session" })

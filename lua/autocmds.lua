@@ -138,3 +138,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
     })
   end,
 })
+
+-- Projects: records which project each buffer belongs to, and restores the
+-- session when nvim is started inside one. Here rather than on a plugin spec
+-- because neither half may wait for a plugin -- the recording has to see the
+-- first file of the session, and the restore has to happen on VimEnter whether or
+-- not persistence.nvim has been reached yet. lua/project.lua explains both.
+require("project").setup()

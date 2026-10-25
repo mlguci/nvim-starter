@@ -32,6 +32,20 @@ M.base46 = {
     SnacksWinBar = { link = "WinBar" },
     SnacksWinBarNC = { link = "WinBarNC" },
   },
+
+  -- base46 ships integrations/snacks.lua, which themes the SnacksPicker* groups
+  -- off the same nvconfig.ui.telescope.style the telescope ones use -- but
+  -- "snacks" is not in its default integration list, so without this the project
+  -- picker (lua/plugins/project.lua) renders unthemed next to every telescope
+  -- picker. Named integrations are appended to base46's own list, not a
+  -- replacement for it.
+  --
+  -- Listing it only makes base46 *compile* the highlight file; loading it is the
+  -- snacks spec's job, which is why lua/plugins/project.lua dofiles it the way
+  -- nvchad/configs/telescope.lua does. And compiling needs one rebuild --
+  -- `:Lazy build base46`, or any theme switch through <leader>ut, which calls
+  -- load_all_highlights() -- so a fresh clone gets an unthemed picker until then.
+  integrations = { "snacks" },
 }
 
 -- Split terminals take half the editor; NvChad defaults are 0.3 / 0.2.
@@ -49,7 +63,20 @@ M.term = {
   },
 }
 
--- M.nvdash = { load_on_startup = true }
+-- The startup screen, except in a project we are about to restore a session into.
+--
+-- Decided here rather than in an autocmd because NvChad runs the
+-- nvdash-on-startup check at *module load* time, not on VimEnter
+-- (ui/lua/nvchad/au.lua), and `ui` is lazy = false -- so it happens before
+-- init.lua even reaches `require "options"`. There is no window in which to
+-- pre-empt it, but the flag it reads is ours. Making the flag conditional means
+-- the dashboard is never opened in a session restore, so there is no dashboard
+-- buffer to tear back down afterwards.
+--
+-- will_restore() is cheap and plugin-free by design -- it reads a JSON file and
+-- lists a directory, no git and no persistence.nvim -- because this runs on the
+-- startup path of every nvim, including the ones that restore nothing.
+M.nvdash = { load_on_startup = not require("project").will_restore() }
 
 M.ui = {
   statusline = {

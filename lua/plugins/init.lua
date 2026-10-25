@@ -73,6 +73,8 @@ return {
         { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
         { "<leader>m", group = "Markdown" }, -- mp, mr
+        -- pb, pD, pd, pl, pp, pr, pS, ps
+        { "<leader>p", group = "Projects" },
         { "<leader>q", group = "Quit" }, -- qQ, qq
         { "<leader>r", group = "Rename", mode = { "n" } }, -- ra (LSP buffers only)
         { "<leader>t", group = "Terminal" }, -- th, tp, tv
