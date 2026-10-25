@@ -117,9 +117,25 @@ end, { desc = "window toggle maximize" })
 map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "quit all" })
 map("n", "<leader>qQ", "<cmd>qa!<cr>", { desc = "quit all (discard changes)" })
 
--- <C-q> -- quit prefix. Nothing global claims <C-q>: Telescope and snacks bind
--- it buffer-locally inside their pickers, and Neovim's own use is as a <C-V>
--- synonym for terminals that eat <C-V>, which ours do not. Terminal mode is
--- included so the Claude sidebar needs no <C-x> detour first; that shadows
--- <C-q> inside the running program, which nothing here uses.
-map({ "n", "t" }, "<C-q>q", "<cmd>qa!<cr>", { desc = "quit all (unconditional)" })
+-- A plain `:qa!` is cancelled when a QuitPre/ExitPre autocmd closes the window
+-- the quit was issued from -- Neovim refuses rather than quit out of a window
+-- that no longer exists ("Exiting may still be cancelled", :help ExitPre).
+-- Snacks installs exactly such a handler for its terminals, so <C-q> inside the
+-- Claude sidebar closed the sidebar and left us sitting in the editor. Asking
+-- twice is the whole fix: the second attempt starts from the window that
+-- replaced it, where nothing is left to cancel.
+local function quit_all()
+  vim.cmd "qa!"
+  vim.cmd "qa!"
+end
+
+-- <C-q> -- quit all, from anywhere, unconditionally. Nothing global claims
+-- <C-q>: Neovim's own use is as a <C-V> synonym for terminals that eat <C-V>,
+-- which ours do not. Every mode is listed so no corner needs an <Esc> or <C-x>
+-- detour first -- insert, visual, select, operator-pending, the command line
+-- and terminal mode, so the tree, an editor split and the Claude sidebar all
+-- behave the same. In terminal mode this shadows <C-q> inside the running
+-- program, which nothing here uses. The one window that could still shadow it
+-- is a picker prompt, which binds <C-q> buffer-locally -- Telescope's copy is
+-- switched off in lua/plugins/init.lua.
+map({ "n", "i", "x", "s", "o", "c", "t" }, "<C-q>", quit_all, { desc = "quit all (unconditional)" })

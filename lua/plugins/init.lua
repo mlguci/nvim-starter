@@ -75,6 +75,23 @@ return {
     },
   },
 
+  -- Give up <C-q> inside pickers so the global quit map in lua/mappings.lua
+  -- reaches them: a prompt's buffer-local mapping always wins over a global
+  -- one. `false` disables a default mapping without binding anything in its
+  -- place. This fragment has to be an opts *function*: NvChad's telescope spec
+  -- is one too, and it ignores incoming opts, so a table of ours would be
+  -- discarded -- as a function we are handed its result and edit that.
+  {
+    "nvim-telescope/telescope.nvim",
+    opts = function(_, opts)
+      for _, mode in ipairs { "i", "n" } do
+        opts.defaults.mappings[mode] = opts.defaults.mappings[mode] or {}
+        opts.defaults.mappings[mode]["<C-q>"] = false
+      end
+      return opts
+    end,
+  },
+
   {
     "coder/claudecode.nvim",
     dependencies = { "folke/snacks.nvim" },
