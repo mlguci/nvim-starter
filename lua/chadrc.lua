@@ -14,6 +14,11 @@ M.base46 = {
 	-- },
 }
 
+-- Split terminals take half the editor; NvChad defaults are 0.3 / 0.2.
+M.term = {
+  sizes = { sp = 0.5, vsp = 0.5, ["bo sp"] = 0.5, ["bo vsp"] = 0.5 },
+}
+
 -- M.nvdash = { load_on_startup = true }
 -- M.ui = {
 --       tabufline = {
