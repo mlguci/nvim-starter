@@ -66,11 +66,10 @@ return {
         { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gc, gt
         { "<leader>m", group = "Markdown" }, -- mp, mr
-        { "<leader>p", group = "Pick terminal" }, -- pt
         { "<leader>q", group = "Quit" }, -- qQ, qq
         { "<leader>r", group = "Rename", mode = { "n" } }, -- ra (LSP buffers only)
-        { "<leader>t", group = "Theme" }, -- th
-        { "<leader>u", group = "UI toggles" }, -- un, ur
+        { "<leader>t", group = "Terminal" }, -- th, tp, tv
+        { "<leader>u", group = "UI toggles" }, -- un, ur, ut
         { "<leader>w", group = "Workspace", mode = { "n" } }, -- wa, wl, wr (LSP buffers only)
       },
     },

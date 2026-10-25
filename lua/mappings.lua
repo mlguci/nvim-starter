@@ -64,12 +64,34 @@ map("n", "<leader>fm", "<cmd>Telescope marks<CR>", { desc = "telescope find mark
 unmap("n", "<leader>cm")
 map("n", "<leader>gc", "<cmd>Telescope git_commits<CR>", { desc = "telescope git commits" })
 
--- <leader>u -- UI toggles (were the bare <leader>n and <leader>rn)
+-- <leader>t -- terminals (were the bare <leader>h, <leader>v and <leader>pt;
+-- <leader>th was the theme picker, which moves to the UI toggles group below)
+unmap("n", "<leader>h")
+unmap("n", "<leader>v")
+unmap("n", "<leader>pt")
+unmap("n", "<leader>th")
+
+map("n", "<leader>th", function()
+  require("nvchad.term").new { pos = "sp" }
+end, { desc = "terminal new horizontal term" })
+
+map("n", "<leader>tv", function()
+  require("nvchad.term").new { pos = "vsp" }
+end, { desc = "terminal new vertical term" })
+
+map("n", "<leader>tp", "<cmd>Telescope terms<CR>", { desc = "terminal pick hidden term" })
+
+-- <leader>u -- UI toggles (were the bare <leader>n and <leader>rn, plus the
+-- theme picker that used to own the <leader>t prefix)
 unmap("n", "<leader>n")
 unmap("n", "<leader>rn")
 
 map("n", "<leader>un", "<cmd>set nu!<CR>", { desc = "toggle line number" })
 map("n", "<leader>ur", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
+
+map("n", "<leader>ut", function()
+  require("nvchad.themes").open()
+end, { desc = "toggle theme picker" })
 
 map({ "n", "t" }, "<A-m>", function()
   if vim.t.restore_cmd then
