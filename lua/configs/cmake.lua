@@ -35,15 +35,27 @@ local options = {
     return "build/${variant:buildType}"
   end,
 
-  -- Symlink the generated compile_commands.json into the project root, where
-  -- clangd's own root_markers already look for it (see the bundled config in
+  -- Put the generated compile_commands.json in the project root, where clangd's
+  -- own root_markers already look for it (see the bundled config in
   -- nvim-lspconfig's lsp/clangd.lua). Not the plugin's "lsp" action, which hands
-  -- the build directory to clangd through lspconfig's `on_new_config` hook -- that
-  -- hook does not exist under the vim.lsp.config API this config uses. `target`
-  -- is a function *reference*: the plugin calls it itself, so it must not be
-  -- invoked here.
+  -- the build directory to clangd through lspconfig's `on_new_config` hook --
+  -- that hook does not exist under the vim.lsp.config API this config uses.
+  --
+  -- "copy" and not "soft_link", which would otherwise be the tidier choice:
+  -- cmake-tools' softlink helper removes an existing *regular file* before
+  -- linking, but when the destination is already a symlink pointing somewhere
+  -- else it falls through to fs_symlink, fails with EEXIST, and leaves the old
+  -- link in place. Switching configure preset therefore left clangd reading the
+  -- previous preset's database -- silently, since it is a perfectly valid
+  -- database, just the wrong one. fs_copyfile overwrites unconditionally, so the
+  -- file always describes the preset that was last generated.
+  --
+  -- The copy is not a staleness risk: cmake-tools rewrites it on every generate,
+  -- and cmake_regenerate_on_save above means saving a CMakeLists.txt is a
+  -- generate. `target` is a function *reference* -- the plugin calls it itself,
+  -- so it must not be invoked here.
   cmake_compile_commands_options = {
-    action = "soft_link",
+    action = "copy",
     target = vim.uv.cwd,
   },
 
