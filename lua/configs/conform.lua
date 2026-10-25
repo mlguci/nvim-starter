@@ -1,6 +1,7 @@
 local options = {
   formatters_by_ft = {
     lua = { "stylua" },
+    markdown = { "prettier", "markdownlint-cli2" },
     -- css = { "prettier" },
     -- html = { "prettier" },
   },
