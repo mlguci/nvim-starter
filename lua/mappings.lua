@@ -60,9 +60,12 @@ map({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP code acti
 unmap("n", "<leader>ma")
 map("n", "<leader>fm", "<cmd>Telescope marks<CR>", { desc = "telescope find marks" })
 
--- <leader>g -- git (was <leader>cm, which sat under the cheatsheet group)
+-- <leader>g -- git. The group belongs to neogit (mapped in lua/plugins/init.lua),
+-- which covers both of the telescope pickers that used to live here and does not
+-- stop at browsing, so neither gets a replacement: <leader>cm was git commits
+-- under the cheatsheet group, <leader>gt was git status.
 unmap("n", "<leader>cm")
-map("n", "<leader>gc", "<cmd>Telescope git_commits<CR>", { desc = "telescope git commits" })
+unmap("n", "<leader>gt")
 
 -- <leader>t -- terminals (were the bare <leader>h, <leader>v and <leader>pt;
 -- <leader>th was the theme picker, which moves to the UI toggles group below)

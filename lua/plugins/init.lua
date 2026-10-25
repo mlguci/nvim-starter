@@ -64,7 +64,7 @@ return {
         { "<leader>c", group = "Code", mode = { "n", "x" } }, -- ca, cf
         { "<leader>d", group = "Diagnostics" }, -- ds
         { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
-        { "<leader>g", group = "Git" }, -- gc, gt
+        { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
         { "<leader>m", group = "Markdown" }, -- mp, mr
         { "<leader>q", group = "Quit" }, -- qQ, qq
         { "<leader>r", group = "Rename", mode = { "n" } }, -- ra (LSP buffers only)
@@ -161,6 +161,40 @@ return {
       { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "claude send selection" },
       { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "claude accept diff" },
       { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "claude deny diff" },
+    },
+  },
+
+  -- Magit-style git porcelain. The status buffer opens on its own tab, the same
+  -- way the Claude diff does, so staging and committing never rearrange the
+  -- working layout. It owns the whole <leader>g group -- the two telescope git
+  -- pickers it replaces are removed in lua/mappings.lua.
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "sindrets/diffview.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    cmd = "Neogit",
+    -- A plain opts table is safe here: the "opts function" trap noted for blink,
+    -- telescope and treesitter above only applies to specs NvChad already
+    -- defines and whose own opts discard incoming fragments. This spec is ours
+    -- alone, so lazy merges it normally.
+    opts = {
+      -- Stated rather than left nil: nil makes neogit pcall-probe for each
+      -- integration, and both are hard dependencies above anyway.
+      integrations = { telescope = true, diffview = true },
+      graph_style = "unicode",
+    },
+    keys = {
+      { "<leader>gg", "<cmd>Neogit<cr>", desc = "neogit status" },
+      { "<leader>gb", "<cmd>Neogit branch<cr>", desc = "neogit branch" },
+      { "<leader>gc", "<cmd>Neogit commit<cr>", desc = "neogit commit" },
+      { "<leader>gd", "<cmd>Neogit diff<cr>", desc = "neogit diff" },
+      { "<leader>gl", "<cmd>Neogit log<cr>", desc = "neogit log" },
+      { "<leader>gp", "<cmd>Neogit pull<cr>", desc = "neogit pull" },
+      { "<leader>gP", "<cmd>Neogit push<cr>", desc = "neogit push" },
+      { "<leader>gz", "<cmd>Neogit stash<cr>", desc = "neogit stash" },
     },
   },
 
