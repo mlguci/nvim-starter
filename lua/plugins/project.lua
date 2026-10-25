@@ -15,17 +15,30 @@ return {
   -- name, and runs this `config` once, on whichever of the two loads first.
   {
     "folke/snacks.nvim",
+
+    -- The one spec here that is not loaded on demand, and only because
+    -- ui_select below is on. vim.ui.select is a global that snacks replaces when
+    -- it loads, so on `keys` alone the menus behind <leader>cm would be the
+    -- builtin cmdline prompt until the first <leader>pp of the session and a
+    -- snacks picker after it -- a UI that changes under you is worse than either
+    -- one consistently. VeryLazy and not an earlier event: it fires after the
+    -- first screen is drawn, so this costs nothing visible, and Snacks.setup()
+    -- enables nothing but `picker` (every other module defaults to off and we
+    -- pass no opts for them), whose own setup is the single assignment above.
+    event = "VeryLazy",
+
     opts = {
       picker = {
-        -- Off deliberately, and the only reason this key is here: snacks
-        -- defaults it to *true*, and Snacks.picker.setup()'s only job is to
-        -- point vim.ui.select at itself. Left alone it would quietly reroute
-        -- every vim.ui.select in the config -- all of cmake-tools' target,
-        -- preset and build-type menus behind <leader>cm, and :ChezmoiEdit --
-        -- through snacks. That is arguably an upgrade, but it is a config-wide
-        -- change in UI smuggled in by a project picker. Flip it to true to take
-        -- it knowingly.
-        ui_select = false,
+        -- Hand every vim.ui.select in the config to the snacks picker.
+        -- Snacks.picker.setup()'s only job is that one assignment, so this
+        -- reaches well past the project picker: all of cmake-tools' target,
+        -- preset and build-type menus behind <leader>cm, persistence's own
+        -- <leader>pS, and anything else that asks the user to choose from a
+        -- list. It is snacks' own default; it is stated anyway because it is a
+        -- config-wide change in UI and nothing else here would explain it.
+        --
+        -- The `event` above is what makes this consistent rather than intermittent.
+        ui_select = true,
       },
     },
 
