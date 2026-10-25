@@ -82,9 +82,42 @@ return {
     opts = {
       terminal = {
         split_side = "right",
-        split_width_percentage = 0.45, -- default is 0.30
+        split_width_percentage = 0.35, -- default is 0.30
+      },
+      diff_opts = {
+        -- Review the diff on a scratch tab holding nothing but the two diff
+        -- panes and the Claude terminal, instead of splitting it into whatever
+        -- the working tab happens to contain. Closing the diff closes the tab,
+        -- so the working layout comes back untouched.
+        open_in_new_tab = true,
       },
     },
+    -- Registered in `init` rather than `config` so the handler exists from
+    -- startup; it only ever fires once the plugin itself has loaded.
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "ClaudeCodeDiffClosed",
+        group = vim.api.nvim_create_augroup("ClaudeCodeDiffFocus", { clear = true }),
+        desc = "Return focus to Claude after a diff is accepted or denied",
+        callback = function(args)
+          -- Teardown only guarantees the terminal is *visible* (ensure_visible
+          -- deliberately keeps focus), so after a tabclose focus lands on
+          -- whichever editor window the original tab left current.
+          local reason = (args.data or {}).reason or ""
+          -- Not user resolutions: another diff is about to claim the screen, or
+          -- setup never got far enough to show one.
+          if reason:match "^replaced" or reason:match "^setup failed" then
+            return
+          end
+          -- After the cleanup stack unwinds, so nothing re-steals focus.
+          vim.schedule(function()
+            pcall(function()
+              require("claudecode.terminal").open()
+            end)
+          end)
+        end,
+      })
+    end,
     keys = {
       { "<A-c>", "<cmd>ClaudeCode<cr>", mode = { "n", "t" }, desc = "claude toggle" },
       { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "claude toggle" },
