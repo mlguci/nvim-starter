@@ -283,25 +283,25 @@ return {
   },
 
   {
-  "nvim-tree/nvim-tree.lua",
-  opts = {
-    renderer = {
-      highlight_git = "name", -- color the filename instead of relying only on the icon
-      icons = {
-        git_placement = "after",
-        glyphs = {
-          git = {
-            unstaged = "●",
-            staged = "✓",
-            unmerged = "",
-            renamed = "➜",
-            untracked = "",
-            deleted = "✗",
-            ignored = "◌",
+    "nvim-tree/nvim-tree.lua",
+    opts = {
+      renderer = {
+        highlight_git = "name", -- color the filename instead of relying only on the icon
+        icons = {
+          git_placement = "after",
+          glyphs = {
+            git = {
+              unstaged = "●",
+              staged = "✓",
+              unmerged = "",
+              renamed = "➜",
+              untracked = "",
+              deleted = "✗",
+              ignored = "◌",
+            },
           },
         },
       },
     },
   },
-},
 }

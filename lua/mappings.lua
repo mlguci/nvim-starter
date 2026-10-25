@@ -112,7 +112,7 @@ map({ "n", "t" }, "<A-m>", function()
     vim.t.restore_cmd = nil
   else
     vim.t.restore_cmd = vim.fn.winrestcmd()
-    vim.cmd("wincmd _ | wincmd |")
+    vim.cmd "wincmd _ | wincmd |"
   end
 end, { desc = "window toggle maximize" })
 
