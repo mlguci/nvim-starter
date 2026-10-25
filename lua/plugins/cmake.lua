@@ -95,18 +95,32 @@ return {
         min_height = 15,
         max_height = 25,
 
-        -- Give <C-q> back to the global quit-all map in lua/mappings.lua, for
-        -- exactly the reason the telescope spec in lua/plugins/init.lua does:
-        -- a buffer-local mapping always beats a global one, and "quit from
-        -- anywhere, unconditionally" is not true if the task list is an
-        -- exception. Overseer binds it to "open task output in the quickfix",
-        -- which is the one action here that is already redundant -- the
+        -- Hand three chords back to the global maps in lua/mappings.lua. A
+        -- buffer-local mapping always beats a global one, so anything overseer
+        -- binds here is a silent exception to a rule stated elsewhere -- the
+        -- same problem the telescope spec in lua/plugins/init.lua solves the
+        -- same way. `false` removes a default keymap, which overseer's own
+        -- config documents, and its merge keeps every other default.
+        --
+        -- <C-q> is quit-all, whose comment in lua/mappings.lua describes it as
+        -- reaching every corner. Overseer had it on "open task output in the
+        -- quickfix", the one action here that is already redundant: the
         -- on_output_quickfix component in lua/configs/cmake.lua has put the
         -- build's errors there before the list is ever opened.
         --
-        -- `false` removes a default keymap; overseer's own config comment
-        -- documents that, and its merge keeps the rest of the defaults.
-        keymaps = { ["<C-q>"] = false },
+        -- <C-j> and <C-k> are window navigation, which this config is
+        -- deliberate about -- it goes as far as binding them in terminal mode so
+        -- that no window needs a detour to leave. Overseer had them scrolling
+        -- the output pane, and since it binds neither <C-h> nor <C-l> the result
+        -- was a split brain: left and right moved between windows while up and
+        -- down scrolled. The scrolling is no loss -- `o` opens the output in a
+        -- window of its own and `p` previews it, and both are scrollable
+        -- normally once there.
+        keymaps = {
+          ["<C-q>"] = false,
+          ["<C-j>"] = false,
+          ["<C-k>"] = false,
+        },
       },
     },
   },
