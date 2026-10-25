@@ -116,3 +116,10 @@ end, { desc = "window toggle maximize" })
 -- easy ways to quit our nvim relationship
 map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "quit all" })
 map("n", "<leader>qQ", "<cmd>qa!<cr>", { desc = "quit all (discard changes)" })
+
+-- <C-q> -- quit prefix. Nothing global claims <C-q>: Telescope and snacks bind
+-- it buffer-locally inside their pickers, and Neovim's own use is as a <C-V>
+-- synonym for terminals that eat <C-V>, which ours do not. Terminal mode is
+-- included so the Claude sidebar needs no <C-x> detour first; that shadows
+-- <C-q> inside the running program, which nothing here uses.
+map({ "n", "t" }, "<C-q>q", "<cmd>qa!<cr>", { desc = "quit all (unconditional)" })

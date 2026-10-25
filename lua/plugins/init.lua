@@ -83,6 +83,16 @@ return {
       terminal = {
         split_side = "right",
         split_width_percentage = 0.35, -- default is 0.30
+
+        -- Give the sidebar the same window bar as every other window. Snacks
+        -- only falls back to its own "id: term_title" bar when wo.winbar is
+        -- unset, and re-applies opts.wo whenever the split is re-shown, so
+        -- this survives toggling.
+        snacks_win_opts = {
+          wo = {
+            winbar = "%!v:lua.require('winbar').render()",
+          },
+        },
       },
       diff_opts = {
         -- Review the diff on a scratch tab holding nothing but the two diff

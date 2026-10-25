@@ -1,17 +1,37 @@
--- This file needs to have same structure as nvconfig.lua 
+-- This file needs to have same structure as nvconfig.lua
 -- https://github.com/NvChad/ui/blob/v3.0/lua/nvconfig.lua
--- Please read that file to know all available options :( 
+-- Please read that file to know all available options :(
 
 ---@type ChadrcConfig
 local M = {}
 
 M.base46 = {
-	theme = "nord",
+  theme = "nord",
 
-	-- hl_override = {
-	-- 	Comment = { italic = true },
-	-- 	["@comment"] = { italic = true },
-	-- },
+  -- Active-window cue: Neovim draws hl-WinBar in the current window and
+  -- hl-WinBarNC in all others, so these two groups are the entire focus
+  -- mechanism -- no focus-tracking autocmd involved. base46 ships both as
+  -- { bg = "NONE" }.
+  --
+  -- A filled marker on the focused window rather than a dimmed background on
+  -- the others: against nord's mid-dark #2E3440, darkening a region raises
+  -- the contrast of the text on it, so the "dimmed" window pops instead of
+  -- receding.
+  hl_override = {
+    WinBar = { fg = "black", bg = "orange", bold = true },
+    WinBarNC = { fg = "grey_fg", bg = "NONE" },
+  },
+
+  -- The Claude sidebar is a snacks window, and snacks remaps WinBar/WinBarNC
+  -- to its own groups and re-stamps that on every toggle. Defining those
+  -- groups is therefore more robust than overriding the mapping: snacks
+  -- registers them through Snacks.util.set_hl with `default = true`, which
+  -- does not override an existing definition, and base46's cache is loaded at
+  -- startup -- before snacks lazy-loads.
+  hl_add = {
+    SnacksWinBar = { link = "WinBar" },
+    SnacksWinBarNC = { link = "WinBarNC" },
+  },
 }
 
 -- Split terminals take half the editor; NvChad defaults are 0.3 / 0.2.

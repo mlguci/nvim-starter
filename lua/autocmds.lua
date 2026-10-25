@@ -11,3 +11,13 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Full-window screens have nothing to label and no sibling to be confused
+-- with, so they opt out of the window bar from options.lua. An empty local
+-- value disables it for just that window.
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("WinBarExclude", { clear = true }),
+  pattern = { "nvdash", "nvcheatsheet" },
+  callback = function()
+    vim.opt_local.winbar = ""
+  end,
+})
