@@ -81,6 +81,16 @@ end, { desc = "terminal new vertical term" })
 
 map("n", "<leader>tp", "<cmd>Telescope terms<CR>", { desc = "terminal pick hidden term" })
 
+-- Window navigation straight out of terminal mode, so leaving a terminal (the
+-- Claude sidebar in particular) no longer needs a <C-x> detour first. These
+-- shadow the same chords inside the running program: in Claude that costs
+-- <C-l> (redraw, which `/clear` and a toggle both cover) and <C-j> (insert a
+-- newline, which <S-CR> still does).
+map("t", "<C-h>", "<cmd>wincmd h<CR>", { desc = "terminal switch window left" })
+map("t", "<C-l>", "<cmd>wincmd l<CR>", { desc = "terminal switch window right" })
+map("t", "<C-j>", "<cmd>wincmd j<CR>", { desc = "terminal switch window down" })
+map("t", "<C-k>", "<cmd>wincmd k<CR>", { desc = "terminal switch window up" })
+
 -- <leader>u -- UI toggles (were the bare <leader>n and <leader>rn, plus the
 -- theme picker that used to own the <leader>t prefix)
 unmap("n", "<leader>n")
