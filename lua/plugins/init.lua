@@ -62,15 +62,21 @@ return {
         { "<leader>a", group = "Claude", mode = { "n", "v" } }, -- aa, ab, ac, ad, af, as (as is visual)
         { "<leader>b", group = "Buffers" }, -- bd, bD, bn
         { "<leader>c", group = "Code", mode = { "n", "x" } }, -- ca, cf
+        -- cma, cmb, cmB, cmc, cmd, cmg, cmo, cmp, cmP, cmr, cmR, cms, cmt, cmT, cmx
+        { "<leader>cm", group = "CMake" },
         { "<leader>C", group = "Chezmoi" }, -- Ca, Cd, Ce, Cf
-        { "<leader>d", group = "Diagnostics" }, -- ds
+        -- db, dB, dc, de, di, dl, do, dO, dr, dt, du (nvim-dap) and ds (diagnostics).
+        -- Two purposes in one group, the same compromise <leader>? and <leader>f make:
+        -- a debugger wants the d, and the one diagnostic map left is not worth a
+        -- prefix of its own.
+        { "<leader>d", group = "Debug / diagnostics" },
         { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
         { "<leader>m", group = "Markdown" }, -- mp, mr
         { "<leader>q", group = "Quit" }, -- qQ, qq
         { "<leader>r", group = "Rename", mode = { "n" } }, -- ra (LSP buffers only)
         { "<leader>t", group = "Terminal" }, -- th, tp, tv
-        { "<leader>u", group = "UI toggles" }, -- un, ur, ut
+        { "<leader>u", group = "UI toggles" }, -- uh, un, ur, ut
         { "<leader>w", group = "Workspace", mode = { "n" } }, -- wa, wl, wr (LSP buffers only)
       },
     },
@@ -278,6 +284,13 @@ return {
         -- zsh parser, so the zsh filetype does not fall back to bash.
         "zsh",
         "git_config",
+        -- C/C++ development. `cmake` highlights the listfiles neocmakelsp serves
+        -- (lua/configs/lspconfig.lua); `c` and `cpp` are what clangd's buffers
+        -- are rendered with, and with `syntax` rtp-disabled there is no fallback
+        -- highlighter if they are missing.
+        "c",
+        "cpp",
+        "cmake",
       },
     },
   },

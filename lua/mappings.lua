@@ -64,6 +64,11 @@ map("n", "<leader>fm", "<cmd>Telescope marks<CR>", { desc = "telescope find mark
 -- which covers both of the telescope pickers that used to live here and does not
 -- stop at browsing, so neither gets a replacement: <leader>cm was git commits
 -- under the cheatsheet group, <leader>gt was git status.
+--
+-- The first unmap has since become load-bearing for a second reason: <leader>cm
+-- is now the CMake prefix (lua/plugins/cmake.lua). A mapping sitting on a prefix
+-- shadows the whole group behind it, so this line is what lets <leader>cmb reach
+-- cmake-tools at all -- do not drop it as merely historical.
 unmap("n", "<leader>cm")
 unmap("n", "<leader>gt")
 
@@ -105,6 +110,14 @@ map("n", "<leader>ur", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
 map("n", "<leader>ut", function()
   require("nvchad.themes").open()
 end, { desc = "toggle theme picker" })
+
+-- Buffer-local state, so this toggles hints for the file being read rather than
+-- globally: clangd's inlay hints (parameter names, deduced types) are worth
+-- having on demand and in the way the rest of the time. Harmless in a buffer
+-- whose server has none -- `is_enabled` just reports false forever.
+map("n", "<leader>uh", function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = 0 }, { bufnr = 0 })
+end, { desc = "toggle inlay hints" })
 
 map({ "n", "t" }, "<A-m>", function()
   if vim.t.restore_cmd then

@@ -103,3 +103,27 @@ vim.api.nvim_create_autocmd("BufWritePost", {
     end
   end,
 })
+
+-- A C or C++ file and its header are the one pair of files always edited
+-- together, and clangd is the only thing that can say which header goes with
+-- which source -- it answers off the compilation database, not off a name guess.
+-- Buffer-local and clangd-only, the same "LSP buffers only" scoping the
+-- which-key comments note for <leader>r and <leader>w: it shadows the builtin
+-- `gs` (sleep N seconds) in exactly those buffers, which is no loss.
+-- :LspClangdSwitchSourceHeader is created by nvim-lspconfig's own clangd
+-- on_attach, which lua/configs/lspconfig.lua is careful not to replace.
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("ClangdSwitchSourceHeader", { clear = true }),
+  desc = "Bind gs to clangd's source/header switch",
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if not client or client.name ~= "clangd" then
+      return
+    end
+
+    vim.keymap.set("n", "gs", "<cmd>LspClangdSwitchSourceHeader<cr>", {
+      buffer = ev.buf,
+      desc = "LSP switch source/header",
+    })
+  end,
+})
