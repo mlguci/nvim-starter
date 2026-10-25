@@ -289,13 +289,20 @@ return {
         highlight_git = "name", -- color the filename instead of relying only on the icon
         icons = {
           git_placement = "after",
+          -- Plain Unicode shapes throughout, deliberately: nvim-tree's own
+          -- defaults reach for nerd-font glyphs on `unmerged` and `deleted`, and
+          -- NvChad swaps in another one for `unmerged`, none of which survive a
+          -- terminal without the patched font. Every entry is restated because a
+          -- key left out here inherits one of those instead -- and an entry set
+          -- to "" does not fall back, it renders nothing at all, which is how
+          -- `unmerged` and `untracked` silently lost their markers.
           glyphs = {
             git = {
               unstaged = "●",
               staged = "✓",
-              unmerged = "",
+              unmerged = "◈",
               renamed = "➜",
-              untracked = "",
+              untracked = "★",
               deleted = "✗",
               ignored = "◌",
             },
