@@ -62,6 +62,7 @@ return {
         { "<leader>a", group = "Claude", mode = { "n", "v" } }, -- aa, ab, ac, ad, af, as (as is visual)
         { "<leader>b", group = "Buffers" }, -- bd, bD, bn
         { "<leader>c", group = "Code", mode = { "n", "x" } }, -- ca, cf
+        { "<leader>C", group = "Chezmoi" }, -- Ca, Cd, Ce, Cf
         { "<leader>d", group = "Diagnostics" }, -- ds
         { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
@@ -216,6 +217,40 @@ return {
     build = "cd app && npx --yes yarn install",
     keys = { { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>", desc = "markdown browser preview" } },
   },
+  -- Edit dotfiles where chezmoi actually keeps them. The filetype recovery and
+  -- the apply-on-save that make that bearable are in lua/autocmds.lua, which
+  -- has to work without this plugin loaded; what the plugin adds on top is the
+  -- picker over managed files and :ChezmoiEdit. The other half of the <leader>C
+  -- group -- the maps that only shell out to chezmoi, and so have no reason to
+  -- drag this plugin in -- is in lua/mappings.lua.
+  {
+    "xvzc/chezmoi.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    cmd = { "ChezmoiEdit", "ChezmoiList" },
+    -- A plain opts table for the reason already given on the neogit spec: the
+    -- "opts function" trap only applies to specs NvChad defines as well.
+    opts = {
+      -- The plugin's own watch applies on save too, but only for buffers it
+      -- opened itself. lua/autocmds.lua covers every route into a source file,
+      -- so leaving this off is what keeps a save from applying twice.
+      edit = { watch = false },
+    },
+    keys = {
+      -- Called through the Lua API rather than as a :Telescope extension:
+      -- NvChad v2.5's `extensions_list` is vestigial -- nothing consumes it and
+      -- the telescope spec has no config function -- so there is no
+      -- load_extension hook to register against.
+      {
+        "<leader>Cf",
+        function()
+          require("chezmoi.pick").telescope()
+        end,
+        desc = "chezmoi find managed file",
+      },
+      { "<leader>Ce", "<cmd>ChezmoiEdit<cr>", desc = "chezmoi edit source" },
+    },
+  },
+
   -- Parsers to install. Both `:TSInstallAll` and NvChad's `build` step read the
   -- *raw* spec.opts, which is this fragment on its own: NvChad's own `opts` is a
   -- function that discards incoming fragments (the same trap as blink above), so
@@ -236,7 +271,37 @@ return {
         "markdown",
         "markdown_inline",
         "yaml",
+        -- chezmoi sources. `syntax` is rtp-disabled in configs/lazy.lua, so
+        -- treesitter is the only highlighter: without these the filetypes
+        -- recovered in lua/autocmds.lua are correct but render unhighlighted.
+        -- `zsh` and not `bash`: this branch of nvim-treesitter ships a separate
+        -- zsh parser, so the zsh filetype does not fall back to bash.
+        "zsh",
+        "git_config",
       },
     },
   },
+
+  {
+  "nvim-tree/nvim-tree.lua",
+  opts = {
+    renderer = {
+      highlight_git = "name", -- color the filename instead of relying only on the icon
+      icons = {
+        git_placement = "after",
+        glyphs = {
+          git = {
+            unstaged = "●",
+            staged = "✓",
+            unmerged = "",
+            renamed = "➜",
+            untracked = "",
+            deleted = "✗",
+            ignored = "◌",
+          },
+        },
+      },
+    },
+  },
+},
 }

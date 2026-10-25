@@ -116,6 +116,21 @@ map({ "n", "t" }, "<A-m>", function()
   end
 end, { desc = "window toggle maximize" })
 
+-- <leader>C -- chezmoi. The picker and :ChezmoiEdit halves of the group are
+-- keys on the chezmoi.nvim spec in lua/plugins/init.lua; these two only shell
+-- out to the chezmoi binary, so they stay here instead of lazy-loading a plugin
+-- neither of them uses.
+map("n", "<leader>Ca", function()
+  require("dotfiles").apply()
+end, { desc = "chezmoi apply all" })
+
+-- A terminal rather than a scratch buffer: chezmoi colours its own diff, and
+-- nvchad.term keeps the shell alive once the command exits so the output stays
+-- readable.
+map("n", "<leader>Cd", function()
+  require("nvchad.term").new { pos = "sp", cmd = "chezmoi diff" }
+end, { desc = "chezmoi diff" })
+
 -- easy ways to quit our nvim relationship
 map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "quit all" })
 map("n", "<leader>qQ", "<cmd>qa!<cr>", { desc = "quit all (discard changes)" })
