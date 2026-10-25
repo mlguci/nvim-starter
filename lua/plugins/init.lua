@@ -84,6 +84,14 @@ return {
         split_side = "right",
         split_width_percentage = 0.35, -- default is 0.30
 
+        -- Hand mode control to the TermModeMemory autocmds in lua/autocmds.lua,
+        -- which put the sidebar back in whichever mode it was left in. Snacks
+        -- otherwise forces terminal mode on every BufEnter, so a sidebar left
+        -- in normal mode (scrolled back through Claude's output, say) could
+        -- never be returned to. Opening still lands in terminal mode: a
+        -- terminal nobody has left yet has no remembered mode to restore.
+        auto_insert = false,
+
         -- Give the sidebar the same window bar as every other window. Snacks
         -- only falls back to its own "id: term_title" bar when wo.winbar is
         -- unset, and re-applies opts.wo whenever the split is re-shown, so
