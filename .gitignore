@@ -1,0 +1,2 @@
+# Per-machine Claude Code permissions: local absolute paths, not shareable.
+.claude/settings.local.json
