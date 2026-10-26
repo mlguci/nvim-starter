@@ -139,6 +139,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+-- :MasonInstallAll, over the tool list in lua/configs/mason.lua -- the external
+-- binaries lazy-lock.json cannot pin. Created eagerly and loading mason by hand
+-- rather than added to the `cmd` list on NvChad's mason spec, which looks like
+-- the tidier way to do it and does not work: lazy's cmd handler re-dispatches
+-- through vim.cmd() once the plugin is loaded, and mason's installer is a
+-- blocking async run that does nothing from inside that nested command context
+-- -- the install is skipped, and lazy's "command not found" fallback is
+-- vim.schedule'd, so a `nvim --headless +MasonInstallAll +qa` exits 0 having
+-- done nothing at all. Calling lazy.load first keeps the whole thing on one
+-- stack frame. Mirrors NvChad's own :TSInstallAll, which is eager for its own
+-- reasons (nvchad/lua/nvchad/autocmds.lua).
+vim.api.nvim_create_user_command("MasonInstallAll", function()
+  require("lazy").load { plugins = { "mason.nvim" } }
+  require("configs.mason").install_all()
+end, { desc = "Install every mason package this config needs" })
+
 -- Projects: records which project each buffer belongs to, and restores the
 -- session when nvim is started inside one. Here rather than on a plugin spec
 -- because neither half may wait for a plugin -- the recording has to see the
