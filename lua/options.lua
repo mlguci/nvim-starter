@@ -13,6 +13,26 @@ vim.o.cursorlineopt = "both"
 -- "Floating windows do not use the global value of 'winbar'" (:help 'winbar').
 vim.o.winbar = "%!v:lua.require('winbar').render()"
 
+-- Folds come from the syntax tree rather than from hand-made ones. 'foldmethod'
+-- starts out "manual", which in practice means no folds at all -- nothing here
+-- ever ran `zf`, so `za` on a function body did nothing. treesitter already has
+-- both halves: the cpp parser is in ensure_installed (lua/plugins/init.lua) and
+-- nvim-treesitter installs the fold query beside it, so a function, class,
+-- namespace, template or lambda folds off the same tree that highlights it.
+--
+-- Global rather than per-filetype because vim.treesitter.foldexpr() answers "0"
+-- for a buffer with no parser, so the overseer task list, the Claude sidebar and
+-- the dashboard get no folds instead of needing to be excluded one by one.
+--
+-- 'foldlevelstart' is the half that is easy to leave out: 'foldlevel' defaults to
+-- 0, so without it every C++ file would open with every function already
+-- collapsed. 99 is "deeper than anything real". It only applies when starting to
+-- edit a buffer (:help 'foldlevelstart'), so a session restoring its own
+-- 'foldlevel' afterwards still wins.
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.o.foldlevelstart = 99
+
 -- What a session file is allowed to carry. Three deliberate departures from the
 -- Neovim default (blank,buffers,curdir,folds,help,tabpages,winsize,terminal):
 --

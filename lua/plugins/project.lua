@@ -79,10 +79,27 @@ return {
             -- nothing: handed an empty `dev` list, `fd` gets no search path and
             -- scans the current directory instead, filling the picker with
             -- whatever happens to sit below wherever you are.
+            --
+            -- cwd is filtered out rather than merely left unselected. The
+            -- registry is ordered most-recently-used first and the project you
+            -- are in was by definition seen most recently, so it lands on row
+            -- one, under the cursor, as the default answer to "switch to
+            -- where?" -- and switch() declines a cd to the directory it is
+            -- already in. The result is that the most obvious keystroke in the
+            -- picker, <CR> on the highlighted row, does nothing at all and says
+            -- nothing about why. There is no switch to the current project, so
+            -- the row has no business being offered.
             finder = function()
-              return vim.tbl_map(function(dir)
-                return { file = dir, text = dir, dir = true }
-              end, project.list())
+              local cwd = vim.fs.normalize(vim.uv.cwd())
+              local items = {}
+
+              for _, dir in ipairs(project.list()) do
+                if dir ~= cwd then
+                  items[#items + 1] = { file = dir, text = dir, dir = true }
+                end
+              end
+
+              return items
             end,
 
             -- Not `format = "file"`. That path goes through snacks' truncpath

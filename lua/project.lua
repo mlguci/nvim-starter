@@ -399,7 +399,11 @@ function M.switch(dir)
     return
   end
 
+  -- Notified rather than ignored: the picker filters this row out, so the only
+  -- way to reach it is :ProjectSwitch with no argument -- which is the one
+  -- caller that cannot see which directory it resolved to.
   if dir == normalize(vim.uv.cwd()) then
+    vim.notify("already in " .. vim.fn.fnamemodify(dir, ":~"))
     return
   end
 
@@ -468,6 +472,21 @@ function M.switch(dir)
       pcall(vim.api.nvim_buf_delete, buf, { force = true })
     end
   end
+
+  -- The argument list is the second list of files the old project leaves behind,
+  -- and wiping buffers does not touch it. It has to go, because its entries are
+  -- stored as typed: start as `nvim lua/options.lua` and the entry stays the
+  -- relative "lua/options.lua" forever, so the cd below silently re-points it
+  -- into the new project. Nothing shows that until the next :mksession, which
+  -- writes both `$argadd lua/options.lua` and a `badd` for it -- and from then on
+  -- the new project's session restores a phantom buffer for a file that does not
+  -- exist, in a loop that re-saves itself every time.
+  --
+  -- After the save and before the restore is the only correct window: the session
+  -- just written for the project being left keeps the arglist that is still
+  -- correct for it, and a project with a session of its own restores its own
+  -- arglist a few lines below.
+  pcall(vim.cmd, "silent! %argdel")
 
   -- Detaching a buffer does not stop its server: Client:_on_detach clears
   -- attached_buffers[bufnr] and returns, and the only unconditional stop is an
