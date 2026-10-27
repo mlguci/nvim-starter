@@ -78,6 +78,15 @@ M.term = {
 -- startup path of every nvim, including the ones that restore nothing.
 M.nvdash = { load_on_startup = not require("project").will_restore() }
 
+-- Double every % so a string shows up literally in the statusline. Needed on
+-- anything a module returns that did not originate in this file: the statusline
+-- is a %! expression, so its result is parsed again as statusline format, and a
+-- %{...} item inside it is evaluated -- unsandboxed, on every redraw.
+-- lua/winbar.lua applies the same escape to file names.
+local function stl_literal(s)
+  return (s:gsub("%%", "%%%%"))
+end
+
 M.ui = {
   statusline = {
     -- NvChad's own "default" theme order (nvchad/stl/utils.lua) with "cmake"
@@ -109,8 +118,11 @@ M.ui = {
         end
 
         -- Both getters are `string?` -- nil until something has been selected --
-        -- so neither can be concatenated unguarded.
-        local label = cmake.get_build_type() or "no build type"
+        -- so neither can be concatenated unguarded. Both are also project data,
+        -- not ours: the build type is the configure preset's CMAKE_BUILD_TYPE,
+        -- verbatim from CMakePresets.json, and the target a name from the build
+        -- tree -- hence stl_literal on each.
+        local label = stl_literal(cmake.get_build_type() or "no build type")
         local target = cmake.get_launch_target()
 
         if target then
@@ -119,7 +131,7 @@ M.ui = {
           -- that is not a UTF-8-clean pipeline -- a silently dropped glyph here
           -- would leave stray padding, and in a sign definition it breaks the
           -- sign outright (see lua/configs/dap.lua).
-          label = label .. " \u{f0443} " .. target
+          label = label .. " \u{f0443} " .. stl_literal(target)
         end
 
         -- \u{e794}: the cmake icon nvim-web-devicons gives a CMakeLists.txt, so
