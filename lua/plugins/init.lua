@@ -225,12 +225,14 @@ return {
   -- to 127.0.0.1, so unlike markdown-preview.nvim there is no npm build step.
   -- The page itself loads markdown-it, KaTeX, Mermaid and highlight.js from
   -- jsdelivr/unpkg, so rendering needs network access. Defaults otherwise:
-  -- one preview at a time on port 8421, opened in the system browser.
+  -- one preview at a time on port 8421, opened in the system browser. The page
+  -- starts in dark mode unless told otherwise; the sun/moon button still flips
+  -- it, but only until the next reload.
   {
     "selimacerbas/mdkite.nvim",
     dependencies = { "selimacerbas/kitehost.nvim" },
     cmd = "MdKite",
-    opts = {},
+    opts = { default_theme = "light" },
     keys = { { "<leader>mp", "<cmd>MdKite toggle<cr>", desc = "markdown browser preview" } },
   },
   -- Edit dotfiles where chezmoi actually keeps them. The filetype recovery and
