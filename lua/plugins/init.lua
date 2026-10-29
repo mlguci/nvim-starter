@@ -207,23 +207,31 @@ return {
     },
   },
 
+  -- Markdown rendered in the buffer. Not lazy-loaded, on the plugin's own
+  -- advice: it already defers its work to the buffers it attaches to, and
+  -- loading it on `ft` would miss the attach for the first markdown buffer.
+  -- `toggle` (lowercase) is per buffer; `Toggle` would flip every buffer.
   {
-    "MeanderingProgrammer/render-markdown.nvim",
-    ft = { "markdown" },
+    "OXY2DEV/markview.nvim",
+    lazy = false,
     dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
     opts = {
-      file_types = { "markdown" },
-      code = { width = "block", border = "thin" },
-      checkbox = { enabled = true },
+      preview = { icon_provider = "devicons" },
     },
-    keys = { { "<leader>mr", "<cmd>RenderMarkdown toggle<cr>", desc = "markdown toggle inline render" } },
+    keys = { { "<leader>mr", "<cmd>Markview toggle<cr>", desc = "markdown toggle inline render" } },
   },
+
+  -- Markdown rendered in the browser. kitehost is a pure-Lua HTTP server bound
+  -- to 127.0.0.1, so unlike markdown-preview.nvim there is no npm build step.
+  -- The page itself loads markdown-it, KaTeX, Mermaid and highlight.js from
+  -- jsdelivr/unpkg, so rendering needs network access. Defaults otherwise:
+  -- one preview at a time on port 8421, opened in the system browser.
   {
-    "iamcco/markdown-preview.nvim",
-    ft = { "markdown" },
-    cmd = { "MarkdownPreviewToggle" },
-    build = "cd app && npx --yes yarn install",
-    keys = { { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>", desc = "markdown browser preview" } },
+    "selimacerbas/mdkite.nvim",
+    dependencies = { "selimacerbas/kitehost.nvim" },
+    cmd = "MdKite",
+    opts = {},
+    keys = { { "<leader>mp", "<cmd>MdKite toggle<cr>", desc = "markdown browser preview" } },
   },
   -- Edit dotfiles where chezmoi actually keeps them. The filetype recovery and
   -- the apply-on-save that make that bearable are in lua/autocmds.lua, which

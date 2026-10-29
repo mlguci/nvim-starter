@@ -24,7 +24,7 @@ brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm chezmoi
 | Formula | Needed by |
 | --- | --- |
 | `ripgrep`, `fd` | the `<leader>f` and `<leader>p` pickers — telescope's `live_grep` and `find_files` shell out to them |
-| `node` | Mason's npm packages (prettier, markdownlint-cli2) and markdown-preview's `yarn install` build step |
+| `node` | Mason's npm packages (prettier, markdownlint-cli2) |
 | `python@3.13` | Mason's PyPI packages (clang-format, gersemi), which it installs into a venv |
 | `cmake`, `ninja` | the `<leader>cm` workflow. `lua/configs/cmake.lua` sets `CMAKE_GENERATOR=Ninja` |
 | `llvm` | clangd. `lua/configs/lspconfig.lua` prefers Homebrew's build (23.x) over the Apple one that wins on `PATH` (21.x), and falls back to bare `clangd` when it is absent — so this is the one entry that is a preference rather than a hard requirement |

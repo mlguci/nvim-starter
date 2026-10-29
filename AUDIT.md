@@ -31,7 +31,7 @@ mostly the familiar case where opening an untrusted repo runs that repo's toolin
 | 1 | Medium | **Fixed** | [`lua/chadrc.lua`](lua/chadrc.lua) | CMake statusline module inserted project data without escaping `%`, allowing command execution |
 | 2 | Medium | Open | `.claude/settings.local.json` | Rules pre-approve arbitrary Python and reading all of `$HOME` |
 | 3 | Low | Open | [`lua/configs/conform.lua`](lua/configs/conform.lua) | Formatters run code supplied by the project |
-| 4 | Low | Open | [`lua/plugins/init.lua`](lua/plugins/init.lua) | markdown-preview: unmaintained, vulnerable dependencies, unpinned build |
+| 4 | Low | **Fixed** | [`lua/plugins/init.lua`](lua/plugins/init.lua) | markdown-preview: unmaintained, vulnerable dependencies, unpinned build |
 | 5 | Info | By design | [`lua/autocmds.lua`](lua/autocmds.lua) | Saving a chezmoi source runs `chezmoi apply`, which runs scripts and templates |
 | 6 | Info | By design | various | Opening an untrusted repo runs its tooling |
 | 7 | Info | Open | `init.lua`, Mason | Supply-chain hygiene |
@@ -113,7 +113,7 @@ in untrusted repos.
 - gersemi 0.29.2 accepts extensions as paths to Python files.
 - clang-format and stylua read declarative config only.
 
-### 4. markdown-preview.nvim — Low, open
+### 4. markdown-preview.nvim — Low, fixed
 
 - The pinned commit is from 2023-10-17; the plugin is unmaintained.
 - Its local preview server ships dependencies with published advisories:
@@ -126,6 +126,18 @@ in untrusted repos.
 
 **Recommendation.** Consider dropping it; render-markdown.nvim already renders
 markdown in the editor.
+
+**Fix** (2026-10-29). markdown-preview.nvim is removed. The browser preview is
+now `selimacerbas/mdkite.nvim`, served by the pure-Lua
+`selimacerbas/kitehost.nvim`: no npm dependencies and no build step. It binds
+`127.0.0.1` by default (`mdkite/init.lua:82`). In-buffer rendering moved from
+render-markdown.nvim to `OXY2DEV/markview.nvim`.
+
+**Residual (info).** The preview page loads markdown-it, KaTeX, Mermaid,
+highlight.js and morphdom from the jsdelivr and unpkg CDNs
+(`mdkite.nvim/assets/index.html`), so the page runs third-party script and
+needs network access. The three new plugins were added after this audit and are
+not covered by the provenance pass below.
 
 ### 5. chezmoi apply-on-save — Info, by design
 
@@ -179,7 +191,7 @@ nothing is exposed.
 | `lua/project.lua:536`, `:624` | Session restore (sources Vimscript) | Files live in `~/.local/state/nvim` (mode `0700`), outside any project, so a repo cannot plant one |
 | `lua/winbar.lua:51` | Window bar `%!` expression | Escapes `%`; *verified*, a crafted file name renders literally |
 | `lua/chadrc.lua:141` | Statusline `cmake` module | Finding 1, fixed |
-| `lua/plugins/init.lua:225` | markdown-preview build command | Finding 4 |
+| `lua/plugins/init.lua:225` | markdown-preview build command | Finding 4, removed |
 
 ## Plugin provenance — pass
 
@@ -203,7 +215,7 @@ nothing is exposed.
 - **Smallest projects.** `xvzc/chezmoi.nvim` (219★) and
   `Civitasv/cmake-tools.nvim` (562★) each have a single maintainer; re-check them
   on update. `sindrets/diffview.nvim` has not been pushed since 2024-08, and
-  `iamcco/markdown-preview.nvim` is covered in finding 4.
+  `iamcco/markdown-preview.nvim` is covered in finding 4 (since removed).
 
 ## Controls already in place
 
