@@ -1,7 +1,7 @@
 -- Every external binary this config calls by name, and the :MasonInstallAll
 -- that puts them on a fresh machine. The plugins themselves are pinned by
 -- lazy-lock.json; these are not, so without this list a clone comes up with no
--- formatter, no debug adapter and two of its language servers missing.
+-- formatter, no debug adapter and three of its language servers missing.
 --
 -- mason.nvim has no `ensure_installed` of its own -- that option belongs to
 -- mason-lspconfig and mason-tool-installer, neither of which is used here -- so
@@ -32,6 +32,7 @@ M.ensure_installed = {
   -- clangd is on PATH.
   "marksman",
   "neocmakelsp",
+  "taplo",
 
   -- The adapter lua/configs/dap.lua registers under the name `codelldb` and
   -- lua/configs/cmake.lua names in cmake_dap_configuration.

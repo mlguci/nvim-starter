@@ -39,12 +39,15 @@ vim.lsp.config("clangd", {
 -- -- it only offers completions to a client that advertises `snippetSupport`,
 -- and NvChad's defaults() above already sets that for every server through
 -- vim.lsp.config("*", { capabilities = ... }).
+-- taplo validates and completes TOML, using SchemaStore schemas it matches by
+-- filename (Cargo.toml, pyproject.toml, ...). nvim-lspconfig's lsp/taplo.lua
+-- is complete on its own, so it needs no vim.lsp.config here either.
 -- No html or cssls: they were in the starter's list, but vscode-langservers-extracted
 -- has never been installed for them, and vim.lsp.enable on a server whose `cmd`
 -- is not on PATH fails per buffer rather than at startup -- so they were two
 -- silent errors waiting on the first .html file. Add the mason package to
 -- lua/configs/mason.lua at the same time as putting either one back.
-local servers = { "marksman", "clangd", "neocmake" }
+local servers = { "marksman", "clangd", "neocmake", "taplo" }
 vim.lsp.enable(servers)
 
 -- read :h vim.lsp.config for changing options of lsp servers

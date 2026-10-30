@@ -303,6 +303,9 @@ return {
         "c",
         "cpp",
         "cmake",
+        -- TOML: the buffers taplo serves (lua/configs/lspconfig.lua) --
+        -- Cargo.toml, pyproject.toml, chezmoi's own config.
+        "toml",
       },
     },
   },
