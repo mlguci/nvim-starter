@@ -90,12 +90,25 @@ return {
   -- place. This fragment has to be an opts *function*: NvChad's telescope spec
   -- is one too, and it ignores incoming opts, so a table of ours would be
   -- discarded -- as a function we are handed its result and edit that.
+  --
+  -- <C-j>/<C-k> move the selection, the way they already do in the snacks
+  -- picker. NvChad maps them to <Down>/<Up> in insert mode globally, which
+  -- would do this on its own, but Telescope's buffer-local defaults shadow
+  -- that: <C-j> is a nop and <C-k> scrolls the preview sideways. That
+  -- sideways scroll moves to <C-h>/<C-l>, which completes the hjkl set and
+  -- costs only <C-l>'s complete_tag (useful in tag-filtered pickers alone) and
+  -- NvChad's insert <C-h> cursor-left, which <Left> still does.
   {
     "nvim-telescope/telescope.nvim",
     opts = function(_, opts)
+      local actions = require "telescope.actions"
       for _, mode in ipairs { "i", "n" } do
         opts.defaults.mappings[mode] = opts.defaults.mappings[mode] or {}
         opts.defaults.mappings[mode]["<C-q>"] = false
+        opts.defaults.mappings[mode]["<C-j>"] = actions.move_selection_next
+        opts.defaults.mappings[mode]["<C-k>"] = actions.move_selection_previous
+        opts.defaults.mappings[mode]["<C-h>"] = actions.preview_scrolling_left
+        opts.defaults.mappings[mode]["<C-l>"] = actions.preview_scrolling_right
       end
       return opts
     end,
