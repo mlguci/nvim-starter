@@ -82,7 +82,9 @@ unmap("n", "<leader>cm")
 unmap("n", "<leader>gt")
 
 -- <leader>t -- terminals (were the bare <leader>h, <leader>v and <leader>pt;
--- <leader>th was the theme picker, which moves to the UI toggles group below)
+-- <leader>th was the theme picker, which moves to the UI toggles group below).
+-- The <leader>h unmap is load-bearing too: <leader>h is now the DevDocs group
+-- (lua/plugins/devdocs.lua), and a mapping on the prefix would shadow it.
 unmap("n", "<leader>h")
 unmap("n", "<leader>v")
 -- <leader>pt was a terminal picker; <leader>p is now the Projects group, so this

@@ -72,6 +72,7 @@ return {
         { "<leader>d", group = "Debug / diagnostics" },
         { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
+        { "<leader>h", group = "DevDocs", mode = { "n", "x" } }, -- hd, hg, hH, hh, hi, hk, ho (hk also visual)
         { "<leader>m", group = "Markdown" }, -- mp, mr
         -- pb, pD, pd, pl, pp, pr, pS, ps
         { "<leader>p", group = "Projects" },

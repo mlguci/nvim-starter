@@ -175,6 +175,13 @@ nothing is exposed.
 - `nvim-cmp` is listed in `lazy-lock.json` but not installed (stale entry).
 - The README's `curl -fsSL https://claude.ai/install.sh | bash` pipes a script to
   the shell; it is the vendor's official installer.
+- devdocs.nvim (added after this audit) downloads `docs.json` and each docset's
+  `db.json` over HTTPS from devdocs.io and pipes them through `jq` and then
+  `pandoc`. The conversion step is replaced by `lua/docs.lua`, which runs pandoc
+  as an argument list with this repo's own filter (`pandoc/devdocs.lua`). The
+  output is only read as markdown.
+  Its `Mkdir` passes `stdpath("data")/devdocs` unquoted to `os.execute`. That is
+  harmless at the current path but would break if the path contained a space.
 
 ## Code-execution points in the repo
 

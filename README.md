@@ -18,7 +18,7 @@ Everything below is a host dependency. The plugins are pinned in
 but nothing in this repo can install a system package for you.
 
 ```sh
-brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm chezmoi
+brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm chezmoi pandoc jq
 ```
 
 | Formula | Needed by |
@@ -29,6 +29,7 @@ brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm chezmoi
 | `cmake`, `ninja` | the `<leader>cm` workflow. `lua/configs/cmake.lua` sets `CMAKE_GENERATOR=Ninja` |
 | `llvm` | clangd. `lua/configs/lspconfig.lua` prefers Homebrew's build (23.x) over the Apple one that wins on `PATH` (21.x), and falls back to bare `clangd` when it is absent — so this is the one entry that is a preference rather than a hard requirement. Its `llvm-cxxfilt` demangles the `<leader>cs` assembly view, with the system `c++filt` as the fallback |
 | `chezmoi` | the `<leader>C` group and the apply-on-save in `lua/autocmds.lua`. Without it those maps fail; the rest of the config is unaffected |
+| `pandoc`, `jq` | the `<leader>h` DevDocs group. devdocs.nvim pipes each docset through both (plus the system `curl`) to turn it into markdown pages; `:checkhealth devdocs` reports anything missing |
 
 The Claude sidebar (`<leader>a`) needs the Claude Code CLI, which is not a brew
 formula:
@@ -64,7 +65,9 @@ lua/
   project.lua         project registry, session restore, per-project teardown
   dotfiles.lua        chezmoi source <-> $HOME path mapping. No plugin dependency
   winbar.lua          'winbar' expression — the active-window cue
+  docs.lua            DevDocs picker, grep, float viewer and HTML -> markdown conversion
   asm.lua             godbolt-style assembly view, compiled locally from compile_commands.json
+pandoc/devdocs.lua    pandoc filter for that conversion: HTML-only tables etc. into markdown
   plugins/            lazy specs, one file per concern
   configs/            plugin options, required from the specs
 ```
@@ -94,6 +97,7 @@ Leader is `<Space>`. `<leader>?k` lists everything; the groups are:
 | `d` | Debug / diagnostics | `u` | UI toggles |
 | `f` | Find files / search | `w` | Workspace (LSP buffers) |
 | `g` | Git | `?` | Help / keymaps |
+| `h` | DevDocs | | |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in
