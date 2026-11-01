@@ -47,7 +47,53 @@ vim.lsp.config("clangd", {
 -- is not on PATH fails per buffer rather than at startup -- so they were two
 -- silent errors waiting on the first .html file. Add the mason package to
 -- lua/configs/mason.lua at the same time as putting either one back.
-local servers = { "marksman", "clangd", "neocmake", "taplo" }
+-- Python is split between two servers, each doing what it is best at.
+-- basedpyright (the maintained pyright fork) owns types: completion, hover,
+-- go-to-definition, inlay hints and type errors. ruff owns style: lint
+-- diagnostics with their quick fixes, formatting (through conform, see
+-- lua/configs/conform.lua) and import sorting. The overlap is handed to ruff --
+-- organize-imports here, hover in the LspAttach handler in lua/autocmds.lua.
+--
+-- before_init is the one hook that runs per client *after* the root is known and
+-- *before* the settings are sent, so it is where pythonPath is filled in from
+-- lua/python.lua -- the same interpreter the debugger, the tests and the REPL
+-- use. Without it basedpyright takes whichever python is first on PATH and every
+-- third-party import in a uv project reads as unresolved.
+--
+-- typeCheckingMode is deliberately left unset: a project states it in
+-- [tool.basedpyright] in its pyproject.toml, and a value here would override
+-- that. diagnosticMode stays on basedpyright's own "openFilesOnly" default --
+-- workspace mode would type-check every file in the venv's site-packages too.
+vim.lsp.config("basedpyright", {
+  before_init = function(_, config)
+    local root = config.root_dir
+    local buf = vim.api.nvim_get_current_buf()
+    -- A buffer from this root, if the current one is not: before_init can run
+    -- while a different buffer is current (a session restore, say).
+    if root and not vim.startswith(vim.api.nvim_buf_get_name(buf), root) then
+      for _, b in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.startswith(vim.api.nvim_buf_get_name(b), root .. "/") then
+          buf = b
+          break
+        end
+      end
+    end
+    -- Mutated in place, not replaced with vim.tbl_deep_extend as :h
+    -- vim.lsp.ClientConfig suggests: the client captured this very table as
+    -- client.settings when it was created, which is what it later sends and
+    -- answers workspace/configuration from, so a new table would never reach
+    -- the server.
+    config.settings.python = config.settings.python or {}
+    config.settings.python.pythonPath = require("python").python(buf)
+  end,
+  settings = {
+    basedpyright = {
+      disableOrganizeImports = true,
+    },
+  },
+})
+
+local servers = { "marksman", "clangd", "neocmake", "taplo", "basedpyright", "ruff" }
 vim.lsp.enable(servers)
 
 -- read :h vim.lsp.config for changing options of lsp servers

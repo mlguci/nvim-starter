@@ -33,10 +33,21 @@ M.ensure_installed = {
   "marksman",
   "neocmakelsp",
   "taplo",
+  -- Python: basedpyright for types and ruff for lint, format and imports (the
+  -- split is explained in lua/configs/lspconfig.lua). Mason's ruff comes first on
+  -- PATH, so it also wins over any ruff a pipx or uv tool install put in
+  -- ~/.local/bin -- conform and the language server then run the same version.
+  "basedpyright",
+  "ruff",
 
   -- The adapter lua/configs/dap.lua registers under the name `codelldb` and
   -- lua/configs/cmake.lua names in cmake_dap_configuration.
   "codelldb",
+  -- The Python debug adapter. Mason installs it into a venv of its own and
+  -- exposes `debugpy-adapter`, which lua/plugins/python.lua hands to
+  -- nvim-dap-python; the program being debugged still runs on the project's
+  -- interpreter, which debugpy injects itself into.
+  "debugpy",
 }
 
 -- Install whatever is missing. Safe to re-run: already-installed packages are

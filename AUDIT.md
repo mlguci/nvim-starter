@@ -162,6 +162,15 @@ nothing is exposed.
 - clangd reads the repo's `compile_commands.json` and `.clangd`, but runs
   without `--query-driver`, so it does not execute the compiler named in the
   compilation database.
+- Python (added after this audit): [`lua/python.lua`](lua/python.lua) takes a
+  repo's own `.venv/bin/python` as the interpreter, and basedpyright runs that
+  interpreter as soon as a `.py` file is opened, to ask it for `sys.path`. A
+  repo that ships a `.venv/` therefore runs code just by being opened. This is
+  the same exposure clangd's `--query-driver` would have opened, accepted here
+  because the type checker has to resolve imports against the project's venv.
+  `uv sync` creates `.venv`; a repo that commits one is the risk. The debugger,
+  neotest, the iron REPL and molten's `<leader>ji` run the same interpreter,
+  but only when asked. ruff reads declarative config only.
 
 ### 7. Supply-chain hygiene — Info, open
 
@@ -194,6 +203,9 @@ nothing is exposed.
 | `lua/mappings.lua:128` | `vim.cmd(vim.t.restore_cmd)` | Value from `winrestcmd()`; tab variables are not saved in sessions or ShaDa |
 | `lua/mappings.lua:148` | `chezmoi diff` in a terminal | Fixed string |
 | `lua/configs/mason.lua:74` | `MasonInstall` with a static list | Safe |
+| `lua/python.lua` `install_host` | `uv venv` / `uv pip install` with a static package list, arguments as a list | Safe; PyPI is the trust root |
+| `lua/python.lua` `molten_init` | `<venv>/bin/python -m ipykernel install --user`, arguments as a list | Runs the project venv's interpreter on request; see finding 6 |
+| jupytext.nvim `commands.lua` | `jupytext` through `vim.fn.system` as a string, file names `shellescape`d | No injection from file names |
 | `lua/project.lua:519`, `:574` | `:cd` with `fnameescape` | Safe |
 | `lua/project.lua:536`, `:624` | Session restore (sources Vimscript) | Files live in `~/.local/state/nvim` (mode `0700`), outside any project, so a repo cannot plant one |
 | `lua/winbar.lua:51` | Window bar `%!` expression | Escapes `%`; *verified*, a crafted file name renders literally |

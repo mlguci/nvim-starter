@@ -139,6 +139,47 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+-- ruff and basedpyright both answer textDocument/hover, so `K` in a Python buffer
+-- would stack ruff's rule documentation on top of the type signature -- and only
+-- the second is ever what was asked for. ruff's hover is the one switched off;
+-- its diagnostics, code actions and formatting are what it is attached for.
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("RuffNoHover", { clear = true }),
+  desc = "Leave hover in Python buffers to basedpyright",
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client and client.name == "ruff" then
+      client.server_capabilities.hoverProvider = false
+    end
+  end,
+})
+
+-- `]j` / `[j` between `# %%` cells, the units the <leader>i REPL and <leader>j
+-- notebook maps (lua/plugins/python.lua) send. Here rather than on a plugin spec
+-- because moving between cells is worth having whether or not either is loaded.
+-- j for Jupyter; `]c` would have been the obvious letter, and is the diff hunk
+-- motion.
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("PythonCells", { clear = true }),
+  pattern = "python",
+  callback = function(ev)
+    vim.keymap.set({ "n", "x", "o" }, "]j", function()
+      require("python").goto_cell(1)
+    end, { buffer = ev.buf, desc = "next # %% cell" })
+    vim.keymap.set({ "n", "x", "o" }, "[j", function()
+      require("python").goto_cell(-1)
+    end, { buffer = ev.buf, desc = "previous # %% cell" })
+  end,
+})
+
+-- :PythonHostInstall -- the venv Neovim's Python remote plugins (molten) run on,
+-- with the packages lua/python.lua lists. Eager for the same reason as
+-- :MasonInstallAll below: it has to be callable from `nvim --headless` before
+-- any plugin has loaded.
+vim.api.nvim_create_user_command("PythonHostInstall", function()
+  require("python").install_host()
+end, { desc = "Create the python3 host venv molten runs on" })
+
 -- :MasonInstallAll, over the tool list in lua/configs/mason.lua -- the external
 -- binaries lazy-lock.json cannot pin. Created eagerly and loading mason by hand
 -- rather than added to the `cmd` list on NvChad's mason spec, which looks like

@@ -54,4 +54,21 @@ vim.o.foldlevelstart = 99
 -- would restore per-window 'winbar' and so break the focus cue in lua/winbar.lua.
 -- If either is ever added, `skiprtp` is what keeps a stale 'runtimepath' from
 -- being re-imposed on lazy.nvim, which owns it.
+-- The interpreter Neovim's own Python remote plugins run on -- molten, for the
+-- notebooks (lua/plugins/python.lua). A dedicated venv that :PythonHostInstall
+-- creates, never a project's: lua/python.lua explains why.
+--
+-- nvchad.options (required above) switches the python3 provider off outright
+-- with loaded_python3_provider = 0, and while that is set the provider's
+-- autoload file defines nothing at all -- molten's commands then fail with
+-- "Unknown function: provider#python3#Require". So the flag is cleared, but
+-- only once the host exists: on a machine that has not run the install the
+-- provider stays off, exactly as NvChad leaves it, rather than going looking
+-- for a python with pynvim on every startup that asks for it.
+local python_host = require("python").host_venv .. "/bin/python"
+if vim.uv.fs_stat(python_host) then
+  vim.g.python3_host_prog = python_host
+  vim.g.loaded_python3_provider = nil
+end
+
 vim.o.sessionoptions = "buffers,curdir,folds,help,tabpages,winsize,skiprtp"

@@ -4,8 +4,8 @@ A Neovim config built on [NvChad](https://github.com/NvChad/NvChad) v2.5, which
 is used here as a plugin rather than as a framework to live inside: this repo is
 the config, and `init.lua` pulls NvChad in as the first spec.
 
-Oriented around three things — C/C++ with CMake, markdown notes, and dotfiles
-managed by chezmoi — plus a project switcher that restores a session, a file
+Oriented around four things — C/C++ with CMake, Python with uv, markdown notes,
+and dotfiles managed by chezmoi — plus a project switcher that restores a session, a file
 tree and a task list per project.
 
 ## Prerequisites
@@ -18,7 +18,7 @@ Everything below is a host dependency. The plugins are pinned in
 but nothing in this repo can install a system package for you.
 
 ```sh
-brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm chezmoi pandoc jq
+brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm uv chezmoi pandoc jq
 ```
 
 | Formula | Needed by |
@@ -28,6 +28,7 @@ brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm chezmoi pan
 | `python@3.13` | Mason's PyPI packages (clang-format, gersemi), which it installs into a venv |
 | `cmake`, `ninja` | the `<leader>cm` workflow. `lua/configs/cmake.lua` sets `CMAKE_GENERATOR=Ninja` |
 | `llvm` | clangd. `lua/configs/lspconfig.lua` prefers Homebrew's build (23.x) over the Apple one that wins on `PATH` (21.x), and falls back to bare `clangd` when it is absent — so this is the one entry that is a preference rather than a hard requirement. Its `llvm-cxxfilt` demangles the `<leader>cs` assembly view, with the system `c++filt` as the fallback |
+| `uv` | Python. `:PythonHostInstall` builds the venv molten runs on with it, and the projects it manages are what `lua/python.lua` looks for: the nearest `.venv` at or above the file. Projects are expected to bring their own venv (`uv sync`); nothing here creates one |
 | `chezmoi` | the `<leader>C` group and the apply-on-save in `lua/autocmds.lua`. Without it those maps fail; the rest of the config is unaffected |
 | `pandoc`, `jq` | the `<leader>h` DevDocs group. devdocs.nvim pipes each docset through both (plus the system `curl`) to turn it into markdown pages; `:checkhealth devdocs` reports anything missing |
 
@@ -43,8 +44,16 @@ curl -fsSL https://claude.ai/install.sh | bash
 ```sh
 git clone git@github.com:mlguci/nvim-starter.git ~/.config/nvim
 nvim --headless "+Lazy! restore" +qa     # plugins, at the pinned commits
-nvim --headless +MasonInstallAll +qa     # formatters, servers, debug adapter
+nvim --headless +MasonInstallAll +qa     # formatters, servers, debug adapters
+nvim --headless +PythonHostInstall +qa   # the python3 host molten runs on
+nvim --headless "+Lazy! build molten-nvim" +qa   # register molten with that host
 ```
+
+The last two are only for Jupyter notebooks (`<leader>j`). Molten is a remote
+plugin: it runs on Neovim's python3 provider, which NvChad switches off and
+`lua/options.lua` switches back on once the host venv exists, and its commands
+only exist after `:UpdateRemotePlugins` -- which is what its build step runs --
+has seen it with that host in place. Order matters for that reason.
 
 `restore` rather than `sync`: `sync` updates to upstream HEAD and rewrites
 `lazy-lock.json`, which defeats the point of having one. Treesitter parsers
@@ -65,6 +74,7 @@ lua/
   project.lua         project registry, session restore, per-project teardown
   dotfiles.lua        chezmoi source <-> $HOME path mapping. No plugin dependency
   winbar.lua          'winbar' expression — the active-window cue
+  python.lua          which interpreter a buffer runs on (.venv lookup), # %% cells, the host venv
   docs.lua            DevDocs picker, grep, float viewer and HTML -> markdown conversion
   asm.lua             godbolt-style assembly view, compiled locally from compile_commands.json
 pandoc/devdocs.lua    pandoc filter for that conversion: HTML-only tables etc. into markdown
@@ -97,7 +107,8 @@ Leader is `<Space>`. `<leader>?k` lists everything; the groups are:
 | `d` | Debug / diagnostics | `u` | UI toggles |
 | `f` | Find files / search | `w` | Workspace (LSP buffers) |
 | `g` | Git | `?` | Help / keymaps |
-| `h` | DevDocs | | |
+| `h` | DevDocs | `T` | Tests (neotest) |
+| `i` | Interactive REPL (iron) | `j` | Jupyter (molten) |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in

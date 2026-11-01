@@ -34,7 +34,10 @@ return {
         "zip",
         "zipPlugin",
         "tutor",
-        "rplugin",
+        -- "rplugin" is deliberately *not* disabled: it is what loads the
+        -- remote-plugin manifest :UpdateRemotePlugins writes, and molten (the
+        -- notebook runner in lua/plugins/python.lua) is a remote plugin. With it
+        -- disabled molten's commands simply never exist.
         "syntax",
         "synmenu",
         "optwin",

@@ -90,9 +90,24 @@ end
 M.ui = {
   statusline = {
     -- NvChad's own "default" theme order (nvchad/stl/utils.lua) with "cmake"
-    -- spliced in before the diagnostics counter. `order` replaces the default
-    -- wholesale rather than extending it, so the rest has to be restated.
-    order = { "mode", "file", "git", "%=", "lsp_msg", "%=", "cmake", "diagnostics", "lsp", "cwd", "cursor" },
+    -- and "python" spliced in before the diagnostics counter -- at most one of
+    -- the two is ever non-empty, since each answers only for its own filetypes.
+    -- `order` replaces the default wholesale rather than extending it, so the
+    -- rest has to be restated.
+    order = {
+      "mode",
+      "file",
+      "git",
+      "%=",
+      "lsp_msg",
+      "%=",
+      "cmake",
+      "python",
+      "diagnostics",
+      "lsp",
+      "cwd",
+      "cursor",
+    },
 
     modules = {
       -- Which build type and which launch target the next <leader>cmb and
@@ -139,6 +154,27 @@ M.ui = {
         -- St_Lsp is an existing base46 statusline group, so this themes itself
         -- with the rest of the bar instead of needing an hl_add entry.
         return (vim.o.columns > 100 and "%#St_Lsp# \u{e794} " .. label .. " ") or ""
+      end,
+
+      -- Which venv the Python buffer's tools run on -- basedpyright, the
+      -- debugger, the tests and the REPL all take lua/python.lua's answer, so
+      -- this one label is true for all of them. "no venv" stands out on purpose:
+      -- it is the state in which every third-party import reads as unresolved,
+      -- and the fix (`uv sync`) is one command away.
+      python = function()
+        local buf = require("nvchad.stl.utils").stbufnr()
+        if vim.bo[buf].filetype ~= "python" or vim.o.columns <= 100 then
+          return ""
+        end
+
+        -- \u{e73c}: the Python icon nvim-web-devicons gives a .py file -- the
+        -- same reasoning as the cmake icon above.
+        local label = require("python").label(buf)
+        if not label then
+          return "%#St_lspWarning# \u{e73c} no venv "
+        end
+        -- The venv's directory name is the filesystem's, not ours.
+        return "%#St_Lsp# \u{e73c} " .. stl_literal(label) .. " "
       end,
     },
   },

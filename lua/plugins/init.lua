@@ -73,12 +73,18 @@ return {
         { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
         { "<leader>h", group = "DevDocs", mode = { "n", "x" } }, -- hd, hg, hH, hh, hi, hk, ho (hk also visual)
+        -- ic, if, il, iq, ir, is, iv, ix (iv is visual) -- lua/plugins/python.lua
+        { "<leader>i", group = "Interactive REPL", mode = { "n", "x" } },
+        -- jc, jd, jh, ji, jI, jl, jo, jr, jR, jv (jv is visual) -- lua/plugins/python.lua
+        { "<leader>j", group = "Jupyter", mode = { "n", "x" } },
         { "<leader>m", group = "Markdown" }, -- mp, mr
         -- pb, pD, pd, pl, pp, pr, pS, ps
         { "<leader>p", group = "Projects" },
         { "<leader>q", group = "Quit" }, -- qQ, qq
         { "<leader>r", group = "Rename", mode = { "n" } }, -- ra (LSP buffers only)
         { "<leader>t", group = "Terminal" }, -- th, tp, tv
+        -- Ta, Td, Tf, Tl, Tn, To, TO, Ts, Tw, Tx (neotest) -- lua/plugins/python.lua
+        { "<leader>T", group = "Tests" },
         { "<leader>u", group = "UI toggles" }, -- uh, un, ur, ut
         { "<leader>w", group = "Workspace", mode = { "n" } }, -- wa, wl, wr (LSP buffers only)
       },
@@ -323,6 +329,12 @@ return {
         -- TOML: the buffers taplo serves (lua/configs/lspconfig.lua) --
         -- Cargo.toml, pyproject.toml, chezmoi's own config.
         "toml",
+        -- Python. `rst` is what basedpyright's hover docs are written in more
+        -- often than not (numpy and Sphinx docstrings); `requirements` highlights
+        -- requirements*.txt.
+        "python",
+        "rst",
+        "requirements",
       },
     },
   },
