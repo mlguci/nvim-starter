@@ -7,6 +7,12 @@ local map = vim.keymap.set
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
+-- Macro recording is never used here and a stray `q` dropping into "recording
+-- @x" is only confusing, so the global key does nothing. Buffer-local `q` maps
+-- (close in help, nvim-tree, neogit, lazy, ...) win over a global one and keep
+-- working. Only normal mode: `q` in visual mode is not a command anyway.
+map("n", "q", "<Nop>", { desc = "disabled (macro recording)" })
+
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
 
 -- Rebind a few NvChad defaults so every which-key group has a single purpose.
