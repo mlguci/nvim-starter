@@ -27,7 +27,7 @@ brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm chezmoi
 | `node` | Mason's npm packages (prettier, markdownlint-cli2) |
 | `python@3.13` | Mason's PyPI packages (clang-format, gersemi), which it installs into a venv |
 | `cmake`, `ninja` | the `<leader>cm` workflow. `lua/configs/cmake.lua` sets `CMAKE_GENERATOR=Ninja` |
-| `llvm` | clangd. `lua/configs/lspconfig.lua` prefers Homebrew's build (23.x) over the Apple one that wins on `PATH` (21.x), and falls back to bare `clangd` when it is absent — so this is the one entry that is a preference rather than a hard requirement |
+| `llvm` | clangd. `lua/configs/lspconfig.lua` prefers Homebrew's build (23.x) over the Apple one that wins on `PATH` (21.x), and falls back to bare `clangd` when it is absent — so this is the one entry that is a preference rather than a hard requirement. Its `llvm-cxxfilt` demangles the `<leader>cs` assembly view, with the system `c++filt` as the fallback |
 | `chezmoi` | the `<leader>C` group and the apply-on-save in `lua/autocmds.lua`. Without it those maps fail; the rest of the config is unaffected |
 
 The Claude sidebar (`<leader>a`) needs the Claude Code CLI, which is not a brew
@@ -64,6 +64,7 @@ lua/
   project.lua         project registry, session restore, per-project teardown
   dotfiles.lua        chezmoi source <-> $HOME path mapping. No plugin dependency
   winbar.lua          'winbar' expression — the active-window cue
+  asm.lua             godbolt-style assembly view, compiled locally from compile_commands.json
   plugins/            lazy specs, one file per concern
   configs/            plugin options, required from the specs
 ```

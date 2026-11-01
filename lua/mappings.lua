@@ -56,6 +56,15 @@ end, { desc = "general format file" })
 
 map({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP code action" })
 
+-- Compiler Explorer view of the buffer, compiled locally with the project's own
+-- flags (lua/asm.lua). The command exists before the module is loaded, so the
+-- first :Asm costs nothing at startup.
+local function asm_toggle()
+  require("asm").toggle()
+end
+map("n", "<leader>cs", asm_toggle, { desc = "show assembly (godbolt view)" })
+vim.api.nvim_create_user_command("Asm", asm_toggle, { desc = "Toggle the assembly view for this buffer" })
+
 -- <leader>f -- find (marks moved off <leader>m, now the markdown group)
 unmap("n", "<leader>ma")
 map("n", "<leader>fm", "<cmd>Telescope marks<CR>", { desc = "telescope find marks" })

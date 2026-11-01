@@ -61,7 +61,7 @@ return {
         { "<leader>?", group = "Help / keymaps" }, -- ?c, ?K, ?k
         { "<leader>a", group = "Claude", mode = { "n", "v" } }, -- aa, ab, ac, ad, af, as (as is visual)
         { "<leader>b", group = "Buffers" }, -- bd, bD, bn
-        { "<leader>c", group = "Code", mode = { "n", "x" } }, -- ca, cf
+        { "<leader>c", group = "Code", mode = { "n", "x" } }, -- ca, cf, cs (cs normal only)
         -- cma, cmb, cmB, cmc, cmd, cmg, cmo, cmp, cmP, cmq, cmr, cmR, cms, cmt, cmT, cmx
         { "<leader>cm", group = "CMake" },
         { "<leader>C", group = "Chezmoi" }, -- Ca, Cd, Ce, Cf
@@ -316,6 +316,9 @@ return {
         "c",
         "cpp",
         "cmake",
+        -- The asm view (lua/asm.lua) sets filetype=asm on its listings; this
+        -- is the parser that highlights them.
+        "asm",
         -- TOML: the buffers taplo serves (lua/configs/lspconfig.lua) --
         -- Cargo.toml, pyproject.toml, chezmoi's own config.
         "toml",

@@ -21,6 +21,12 @@ local function label(buf)
     return cmd and basename(cmd:match "^%S+" or cmd) or "terminal"
   end
 
+  -- A buffer that knows better names itself (lua/asm.lua: file, compiler, -O).
+  local own = vim.b[buf].winbar_label
+  if own then
+    return own
+  end
+
   local ft = vim.bo[buf].filetype
 
   -- Scratch-type windows carry a synthetic name ("NvimTree_1"), so the
