@@ -46,6 +46,12 @@ afterwards to sign in. Until it is installed, the `<leader>ax` maps only warn:
 npm i -g @openai/codex   # or: brew install codex
 ```
 
+Remote editing (`<leader>r`, `lua/plugins/remote.lua`) needs nothing extra on
+this machine beyond `ssh` and kitty, which the remote UI opens in. The remote
+host needs only an SSH server, `bash`, `curl` or `wget`, and access to GitHub. `:RemoteStart`
+installs Neovim there, copies this config over, and lazy and Mason then install
+the Linux builds of everything on the first start.
+
 ## Install
 
 ```sh
@@ -111,11 +117,11 @@ Leader is `<Space>`. `<leader>?K` lists everything; the groups are:
 | `c` | Code / LSP | `m` | Markdown |
 | `cm` | CMake | `p` | Projects |
 | `cw` | Workspace folders (LSP buffers) | `q` | Quit |
-| `C` | Chezmoi | `t` | Terminal |
-| `d` | Debug | `T` | Tests (neotest) |
-| `f` | Find | `u` | UI toggles |
-| `g` | Git | `?` | Keymaps |
-| `h` | Docs (DevDocs) | | |
+| `C` | Chezmoi | `r` | Remote (remote-nvim) |
+| `d` | Debug | `t` | Terminal |
+| `f` | Find | `T` | Tests (neotest) |
+| `g` | Git | `u` | UI toggles |
+| `h` | Docs (DevDocs) | `?` | Keymaps |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in

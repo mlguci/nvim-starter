@@ -83,6 +83,8 @@ return {
         { "<leader>m", group = "Markdown", icon = { icon = "", color = "grey" } }, -- mp, mr
         -- pb, pD, pd, pl, pp, pr, pS, ps
         { "<leader>p", group = "Projects", icon = { icon = "󰃖", color = "purple" } },
+        -- rc, rd, ri, rl, rs, rS -- lua/plugins/remote.lua
+        { "<leader>r", group = "Remote", icon = { icon = "󰒍", color = "cyan" } },
         { "<leader>q", group = "Quit" }, -- qQ, qq
         { "<leader>t", group = "Terminal" }, -- th, tp, tv
         -- Ta, Td, Tf, Tl, Tn, To, TO, Ts, Tw, Tx (neotest) -- lua/plugins/python.lua
