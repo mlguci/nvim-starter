@@ -208,11 +208,43 @@ return {
   {
     "folke/snacks.nvim",
     keys = {
-      { "<A-x>", function() require("codex").toggle() end, mode = { "n", "t" }, desc = "codex toggle" },
-      { "<leader>axx", function() require("codex").toggle() end, desc = "codex toggle" },
-      { "<leader>axf", function() require("codex").focus() end, desc = "codex focus" },
-      { "<leader>axb", function() require("codex").add_buffer() end, desc = "codex add current buffer" },
-      { "<leader>axs", function() require("codex").send_selection() end, mode = "v", desc = "codex send selection" },
+      {
+        "<A-x>",
+        function()
+          require("codex").toggle()
+        end,
+        mode = { "n", "t" },
+        desc = "codex toggle",
+      },
+      {
+        "<leader>axx",
+        function()
+          require("codex").toggle()
+        end,
+        desc = "codex toggle",
+      },
+      {
+        "<leader>axf",
+        function()
+          require("codex").focus()
+        end,
+        desc = "codex focus",
+      },
+      {
+        "<leader>axb",
+        function()
+          require("codex").add_buffer()
+        end,
+        desc = "codex add current buffer",
+      },
+      {
+        "<leader>axs",
+        function()
+          require("codex").send_selection()
+        end,
+        mode = "v",
+        desc = "codex send selection",
+      },
     },
   },
 
