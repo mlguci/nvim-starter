@@ -1,4 +1,28 @@
-require("nvchad.configs.lspconfig").defaults()
+-- NvChad's buffer-local LSP maps, regrouped under <leader>c (Code / LSP) so the
+-- which-key menu has no single-key <leader>r group, no rarely-used <leader>w
+-- group and no loose <leader>D. Replaced on the module table *before* defaults()
+-- rather than deleted afterwards: the LspAttach autocmd defaults() registers
+-- looks up M.on_attach each time it fires, so NvChad's maps are never created at
+-- all and there is no ordering race with another LspAttach handler.
+local nvlsp = require "nvchad.configs.lspconfig"
+
+nvlsp.on_attach = function(_, bufnr)
+  local function map(lhs, rhs, desc)
+    vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = "LSP " .. desc })
+  end
+
+  map("gD", vim.lsp.buf.declaration, "Go to declaration")
+  map("gd", vim.lsp.buf.definition, "Go to definition")
+  map("<leader>ct", vim.lsp.buf.type_definition, "Go to type definition")
+  map("<leader>cr", require "nvchad.lsp.renamer", "rename symbol")
+  map("<leader>cwa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
+  map("<leader>cwr", vim.lsp.buf.remove_workspace_folder, "Remove workspace folder")
+  map("<leader>cwl", function()
+    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  end, "List workspace folders")
+end
+
+nvlsp.defaults()
 
 -- Homebrew LLVM's clangd (23.x) in preference to the Apple one that wins on
 -- $PATH (21.x), with a fallback so this file still works on a machine chezmoi

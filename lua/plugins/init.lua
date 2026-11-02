@@ -56,37 +56,36 @@ return {
       preset = "modern",
 
       -- One purpose per group. Mappings that did not fit their prefix are
-      -- rebound in lua/mappings.lua -- keep the two files in sync.
+      -- rebound in lua/mappings.lua -- keep the two files in sync. An explicit
+      -- icon only where which-key's own rules (which-key/icons.lua, matched on
+      -- the group name) find none.
       spec = {
-        { "<leader>?", group = "Help / keymaps" }, -- ?c, ?K, ?k
-        { "<leader>a", group = "Claude", mode = { "n", "v" } }, -- aa, ab, ac, ad, af, as (as is visual)
+        { "<leader>?", group = "Keymaps", icon = { icon = "", color = "grey" } }, -- ?c, ?K, ?k
+        { "<leader>a", group = "Claude", icon = { icon = "󰚩", color = "orange" }, mode = { "n", "v" } }, -- aa, ab, ac, ad, af, as (as is visual)
         { "<leader>b", group = "Buffers" }, -- bd, bD, bn
-        { "<leader>c", group = "Code", mode = { "n", "x" } }, -- ca, cf, cs (cs normal only)
+        -- ca, cd, cf, cs, and in LSP buffers cr, ct (cd, cs, cr, ct normal only).
+        -- The LSP ones are NvChad's on_attach maps, regrouped in lua/configs/lspconfig.lua.
+        { "<leader>c", group = "Code / LSP", mode = { "n", "x" } },
         -- cma, cmb, cmB, cmc, cmd, cmg, cmo, cmp, cmP, cmq, cmr, cmR, cms, cmt, cmT, cmx
-        { "<leader>cm", group = "CMake" },
-        { "<leader>C", group = "Chezmoi" }, -- Ca, Cd, Ce, Cf
-        -- db, dB, dc, de, di, dl, do, dO, dr, dt, du (nvim-dap) and ds (diagnostics).
-        -- Two purposes in one group, the same compromise <leader>? and <leader>f make:
-        -- a debugger wants the d, and the one diagnostic map left is not worth a
-        -- prefix of its own.
-        { "<leader>d", group = "Debug / diagnostics" },
-        { "<leader>f", group = "Find files / search" }, -- fa, fb, ff, fh, fm, fo, fw, fz
+        { "<leader>cm", group = "CMake", icon = { icon = "󰣪", color = "yellow" } },
+        { "<leader>cw", group = "Workspace folders", icon = { icon = "", color = "blue" } }, -- cwa, cwl, cwr (LSP buffers only)
+        { "<leader>C", group = "Chezmoi", icon = { icon = "󰋜", color = "cyan" } }, -- Ca, Cd, Ce, Cf
+        { "<leader>d", group = "Debug" }, -- db, dB, dc, de, di, dl, do, dO, dr, dt, du (nvim-dap)
+        { "<leader>f", group = "Find" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
-        { "<leader>h", group = "DevDocs", mode = { "n", "x" } }, -- hd, hg, hH, hh, hi, hk, ho (hk also visual)
+        { "<leader>h", group = "Docs (DevDocs)", icon = { icon = "󰈙", color = "azure" }, mode = { "n", "x" } }, -- hd, hg, hH, hh, hi, hk, ho (hk also visual)
         -- ic, if, il, iq, ir, is, iv, ix (iv is visual) -- lua/plugins/python.lua
-        { "<leader>i", group = "Interactive REPL", mode = { "n", "x" } },
+        { "<leader>i", group = "Python REPL", icon = { icon = "", color = "yellow" }, mode = { "n", "x" } },
         -- jc, jd, jh, ji, jI, jl, jo, jr, jR, jv (jv is visual) -- lua/plugins/python.lua
-        { "<leader>j", group = "Jupyter", mode = { "n", "x" } },
-        { "<leader>m", group = "Markdown" }, -- mp, mr
+        { "<leader>j", group = "Jupyter", icon = { icon = "󰠮", color = "orange" }, mode = { "n", "x" } },
+        { "<leader>m", group = "Markdown", icon = { icon = "", color = "grey" } }, -- mp, mr
         -- pb, pD, pd, pl, pp, pr, pS, ps
-        { "<leader>p", group = "Projects" },
+        { "<leader>p", group = "Projects", icon = { icon = "󰃖", color = "purple" } },
         { "<leader>q", group = "Quit" }, -- qQ, qq
-        { "<leader>r", group = "Rename", mode = { "n" } }, -- ra (LSP buffers only)
         { "<leader>t", group = "Terminal" }, -- th, tp, tv
         -- Ta, Td, Tf, Tl, Tn, To, TO, Ts, Tw, Tx (neotest) -- lua/plugins/python.lua
-        { "<leader>T", group = "Tests" },
+        { "<leader>T", group = "Tests", icon = { icon = "󰙨", color = "green" } },
         { "<leader>u", group = "UI toggles" }, -- uh, un, ur, ut
-        { "<leader>w", group = "Workspace", mode = { "n" } }, -- wa, wl, wr (LSP buffers only)
       },
     },
   },

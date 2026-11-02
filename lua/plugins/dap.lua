@@ -1,10 +1,8 @@
 -- Debugging. Reached either through :CMakeDebug (<leader>cmd, see
 -- lua/plugins/cmake.lua) or directly through the <leader>d maps below; the
--- adapter and UI wiring are in lua/configs/dap.lua.
---
--- <leader>d is shared with NvChad's <leader>ds diagnostic loclist, hence the
--- two-purpose group label in lua/plugins/init.lua -- the same compromise
--- <leader>? and <leader>f already make.
+-- adapter and UI wiring are in lua/configs/dap.lua. The whole <leader>d group
+-- is the debugger's: NvChad's <leader>ds diagnostic loclist moved to
+-- <leader>cd (lua/mappings.lua).
 return {
   {
     "mfussenegger/nvim-dap",

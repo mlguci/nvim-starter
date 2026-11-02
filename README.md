@@ -95,20 +95,20 @@ Two conventions worth knowing before editing:
 
 ## Keymaps
 
-Leader is `<Space>`. `<leader>?k` lists everything; the groups are:
+Leader is `<Space>`. `<leader>?K` lists everything; the groups are:
 
 | Prefix | Group | Prefix | Group |
 | --- | --- | --- | --- |
-| `a` | Claude | `m` | Markdown |
-| `b` | Buffers | `p` | Projects |
-| `c` | Code | `q` | Quit |
-| `cm` | CMake | `r` | Rename (LSP buffers) |
+| `a` | Claude | `i` | Python REPL (iron) |
+| `b` | Buffers | `j` | Jupyter (molten) |
+| `c` | Code / LSP | `m` | Markdown |
+| `cm` | CMake | `p` | Projects |
+| `cw` | Workspace folders (LSP buffers) | `q` | Quit |
 | `C` | Chezmoi | `t` | Terminal |
-| `d` | Debug / diagnostics | `u` | UI toggles |
-| `f` | Find files / search | `w` | Workspace (LSP buffers) |
-| `g` | Git | `?` | Help / keymaps |
-| `h` | DevDocs | `T` | Tests (neotest) |
-| `i` | Interactive REPL (iron) | `j` | Jupyter (molten) |
+| `d` | Debug | `T` | Tests (neotest) |
+| `f` | Find | `u` | UI toggles |
+| `g` | Git | `?` | Keymaps |
+| `h` | Docs (DevDocs) | | |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in

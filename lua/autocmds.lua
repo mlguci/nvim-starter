@@ -119,8 +119,9 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 -- together, and clangd is the only thing that can say which header goes with
 -- which source -- it answers off the compilation database, not off a name guess.
 -- Buffer-local and clangd-only, the same "LSP buffers only" scoping the
--- which-key comments note for <leader>r and <leader>w: it shadows the builtin
--- `gs` (sleep N seconds) in exactly those buffers, which is no loss.
+-- which-key comments note for <leader>cr, <leader>ct and <leader>cw: it
+-- shadows the builtin `gs` (sleep N seconds) in exactly those buffers, which
+-- is no loss.
 -- :LspClangdSwitchSourceHeader is created by nvim-lspconfig's own clangd
 -- on_attach, which lua/configs/lspconfig.lua is careful not to replace.
 vim.api.nvim_create_autocmd("LspAttach", {

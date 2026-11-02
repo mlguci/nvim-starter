@@ -53,8 +53,14 @@ map("n", "<leader>bD", function()
   require("nvchad.tabufline").close_buffer(buf)
 end, { desc = "buffer close (discard changes)" })
 
--- <leader>c -- code (was <leader>fm, which sat under the find group)
+-- <leader>c -- code / LSP (format was <leader>fm, which sat under the find
+-- group; the diagnostic loclist was <leader>ds, which made <leader>d a
+-- two-purpose group). The buffer-local LSP maps of the group -- cr, ct, cw* --
+-- are set in the on_attach in lua/configs/lspconfig.lua.
 unmap({ "n", "x" }, "<leader>fm")
+unmap("n", "<leader>ds")
+
+map("n", "<leader>cd", vim.diagnostic.setloclist, { desc = "LSP diagnostic loclist" })
 
 map({ "n", "x" }, "<leader>cf", function()
   require("conform").format { lsp_fallback = true }
