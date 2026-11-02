@@ -85,35 +85,37 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter", "TermOpen" }, {
 -- work whether or not the plugin ever loads.
 local dotfiles = require "dotfiles"
 
-vim.filetype.add {
-  pattern = {
-    -- Escaped: the source path's own dots would otherwise match any character.
-    [vim.pesc(dotfiles.source) .. "/.*"] = function(path)
-      if not dotfiles.managed_source(path) then
-        return nil
-      end
-      -- nil falls through to Neovim's own detection, so a name this does not
-      -- recognise behaves exactly as it did before.
-      return vim.filetype.match { filename = dotfiles.target(path) }
-    end,
-  },
-}
+if dotfiles.enabled then
+  vim.filetype.add {
+    pattern = {
+      -- Escaped: the source path's own dots would otherwise match any character.
+      [vim.pesc(dotfiles.source) .. "/.*"] = function(path)
+        if not dotfiles.managed_source(path) then
+          return nil
+        end
+        -- nil falls through to Neovim's own detection, so a name this does not
+        -- recognise behaves exactly as it did before.
+        return vim.filetype.match { filename = dotfiles.target(path) }
+      end,
+    },
+  }
 
--- Saving a source pushes it straight to $HOME. Editing the live file and
--- forgetting to `chezmoi add` is what lets the two drift apart -- a drift that
--- silently loses whichever side chezmoi did not know about -- so the source is
--- the only copy worth editing and saving keeps it authoritative.
-vim.api.nvim_create_autocmd("BufWritePost", {
-  group = vim.api.nvim_create_augroup("ChezmoiApply", { clear = true }),
-  -- A pattern holding a slash is matched against the full path, and `*` spans
-  -- path separators, so this covers nested sources too.
-  pattern = dotfiles.source .. "/*",
-  callback = function(ev)
-    if dotfiles.managed_source(ev.file) then
-      dotfiles.apply(ev.file)
-    end
-  end,
-})
+  -- Saving a source pushes it straight to $HOME. Editing the live file and
+  -- forgetting to `chezmoi add` is what lets the two drift apart -- a drift that
+  -- silently loses whichever side chezmoi did not know about -- so the source is
+  -- the only copy worth editing and saving keeps it authoritative.
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    group = vim.api.nvim_create_augroup("ChezmoiApply", { clear = true }),
+    -- A pattern holding a slash is matched against the full path, and `*` spans
+    -- path separators, so this covers nested sources too.
+    pattern = dotfiles.source .. "/*",
+    callback = function(ev)
+      if dotfiles.managed_source(ev.file) then
+        dotfiles.apply(ev.file)
+      end
+    end,
+  })
+end
 
 -- A C or C++ file and its header are the one pair of files always edited
 -- together, and clangd is the only thing that can say which header goes with

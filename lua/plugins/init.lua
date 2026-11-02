@@ -71,7 +71,13 @@ return {
         -- cma, cmb, cmB, cmc, cmd, cmg, cmo, cmp, cmP, cmq, cmr, cmR, cms, cmt, cmT, cmx
         { "<leader>cm", group = "CMake", icon = { icon = "󰣪", color = "yellow" } },
         { "<leader>cw", group = "Workspace folders", icon = { icon = "", color = "blue" } }, -- cwa, cwl, cwr (LSP buffers only)
-        { "<leader>C", group = "Chezmoi", icon = { icon = "󰋜", color = "cyan" } }, -- Ca, Cd, Ce, Cf
+        -- Ca, Cd, Ce, Cf. Hidden where chezmoi is not installed (lua/dotfiles.lua)
+        {
+          "<leader>C",
+          group = "Chezmoi",
+          icon = { icon = "󰋜", color = "cyan" },
+          cond = require("dotfiles").enabled,
+        },
         { "<leader>d", group = "Debug" }, -- db, dB, dc, de, di, dl, do, dO, dr, dt, du (nvim-dap)
         { "<leader>f", group = "Find" }, -- fa, fb, ff, fh, fm, fo, fw, fz
         { "<leader>g", group = "Git" }, -- gb, gc, gd, gg, gl, gp, gP, gz
@@ -280,6 +286,10 @@ return {
   -- drag this plugin in -- is in lua/mappings.lua.
   {
     "xvzc/chezmoi.nvim",
+    -- Skipped where chezmoi is not installed. `cond` rather than `enabled`:
+    -- lazy still keeps the plugin in lazy-lock.json, so the shared lock file
+    -- does not churn between machines with chezmoi and machines without.
+    cond = require("dotfiles").enabled,
     dependencies = { "nvim-lua/plenary.nvim" },
     cmd = { "ChezmoiEdit", "ChezmoiList" },
     -- A plain opts table for the reason already given on the neogit spec: the

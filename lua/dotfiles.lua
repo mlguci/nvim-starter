@@ -13,6 +13,12 @@ local M = {}
 -- startup; no chezmoi.toml here redefines it.
 M.source = vim.fs.normalize((vim.env.XDG_DATA_HOME or vim.env.HOME .. "/.local/share") .. "/chezmoi")
 
+-- Whether this machine uses chezmoi at all. The config is also cloned onto
+-- machines without it, and there the whole <leader>C group, chezmoi.nvim and
+-- the hooks in lua/autocmds.lua are skipped. A PATH lookup only -- no
+-- subprocess -- so it costs nothing at startup.
+M.enabled = vim.fn.executable "chezmoi" == 1
+
 -- Attribute prefixes chezmoi puts in front of a source file name. They stack
 -- in any order (encrypted_private_dot_netrc), so they are stripped in a loop
 -- rather than once.

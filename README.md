@@ -29,7 +29,7 @@ brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm uv chezmoi 
 | `cmake`, `ninja` | the `<leader>cm` workflow. `lua/configs/cmake.lua` sets `CMAKE_GENERATOR=Ninja` |
 | `llvm` | clangd. `lua/configs/lspconfig.lua` prefers Homebrew's build (23.x) over the Apple one that wins on `PATH` (21.x), and falls back to bare `clangd` when it is absent — so this is the one entry that is a preference rather than a hard requirement. Its `llvm-cxxfilt` demangles the `<leader>cs` assembly view, with the system `c++filt` as the fallback |
 | `uv` | Python. `:PythonHostInstall` builds the venv molten runs on with it, and the projects it manages are what `lua/python.lua` looks for: the nearest `.venv` at or above the file. Projects are expected to bring their own venv (`uv sync`); nothing here creates one |
-| `chezmoi` | the `<leader>C` group and the apply-on-save in `lua/autocmds.lua`. Without it those maps fail; the rest of the config is unaffected |
+| `chezmoi` | optional: the `<leader>C` group, chezmoi.nvim and the filetype recovery and apply-on-save in `lua/autocmds.lua`. When the binary is not on `PATH` all of it is skipped (`require("dotfiles").enabled`), so the config works unchanged on machines without chezmoi |
 | `pandoc`, `jq` | the `<leader>h` DevDocs group. devdocs.nvim pipes each docset through both (plus the system `curl`) to turn it into markdown pages; `:checkhealth devdocs` reports anything missing |
 
 The AI sidebars under `<leader>a` each need their own CLI. Claude (`<leader>ac`)
