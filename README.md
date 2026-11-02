@@ -32,11 +32,18 @@ brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm uv chezmoi 
 | `chezmoi` | the `<leader>C` group and the apply-on-save in `lua/autocmds.lua`. Without it those maps fail; the rest of the config is unaffected |
 | `pandoc`, `jq` | the `<leader>h` DevDocs group. devdocs.nvim pipes each docset through both (plus the system `curl`) to turn it into markdown pages; `:checkhealth devdocs` reports anything missing |
 
-The Claude sidebar (`<leader>a`) needs the Claude Code CLI, which is not a brew
-formula:
+The AI sidebars under `<leader>a` each need their own CLI. Claude (`<leader>ac`)
+needs the Claude Code CLI, which is not a brew formula:
 
 ```sh
 curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Codex (`<leader>ax`, `lua/codex.lua`) needs OpenAI's Codex CLI. Run `codex` once
+afterwards to sign in. Until it is installed, the `<leader>ax` maps only warn:
+
+```sh
+npm i -g @openai/codex   # or: brew install codex
 ```
 
 ## Install

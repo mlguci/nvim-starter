@@ -61,8 +61,10 @@ return {
       -- the group name) find none.
       spec = {
         { "<leader>?", group = "Keymaps", icon = { icon = "", color = "grey" } }, -- ?c, ?K, ?k
-        { "<leader>a", group = "Claude", icon = { icon = "󰚩", color = "orange" }, mode = { "n", "v" } }, -- aa, ab, ac, ad, af, as (as is visual)
-        { "<leader>b", group = "Buffers" }, -- bd, bD, bn
+        { "<leader>a", group = "AI", icon = { icon = "󰚩", color = "orange" }, mode = { "n", "v" } }, -- ac, ax
+        { "<leader>ac", group = "Claude", icon = { icon = "󰚩", color = "orange" }, mode = { "n", "v" } }, -- aca, acb, acc, acd, acf, acs (acs is visual)
+        { "<leader>ax", group = "Codex", icon = { icon = "󰧑", color = "green" }, mode = { "n", "v" } }, -- axb, axf, axs, axx (axs is visual) -- lua/codex.lua
+        { "<leader>b", group = "Buffers" }, -- ba, bd, bD, bn
         -- ca, cd, cf, cs, and in LSP buffers cr, ct (cd, cs, cr, ct normal only).
         -- The LSP ones are NvChad's on_attach maps, regrouped in lua/configs/lspconfig.lua.
         { "<leader>c", group = "Code / LSP", mode = { "n", "x" } },
@@ -183,12 +185,26 @@ return {
     end,
     keys = {
       { "<A-c>", "<cmd>ClaudeCode<cr>", mode = { "n", "t" }, desc = "claude toggle" },
-      { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "claude toggle" },
-      { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "claude focus" },
-      { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "claude add current buffer" },
-      { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "claude send selection" },
-      { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "claude accept diff" },
-      { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "claude deny diff" },
+      { "<leader>acc", "<cmd>ClaudeCode<cr>", desc = "claude toggle" },
+      { "<leader>acf", "<cmd>ClaudeCodeFocus<cr>", desc = "claude focus" },
+      { "<leader>acb", "<cmd>ClaudeCodeAdd %<cr>", desc = "claude add current buffer" },
+      { "<leader>acs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "claude send selection" },
+      { "<leader>aca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "claude accept diff" },
+      { "<leader>acd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "claude deny diff" },
+    },
+  },
+
+  -- Codex (OpenAI's CLI) in a snacks terminal sidebar that mirrors the Claude
+  -- one. There is no plugin: lua/codex.lua drives Snacks.terminal directly, and
+  -- these keys are merged into the snacks spec so they load snacks on first use.
+  {
+    "folke/snacks.nvim",
+    keys = {
+      { "<A-x>", function() require("codex").toggle() end, mode = { "n", "t" }, desc = "codex toggle" },
+      { "<leader>axx", function() require("codex").toggle() end, desc = "codex toggle" },
+      { "<leader>axf", function() require("codex").focus() end, desc = "codex focus" },
+      { "<leader>axb", function() require("codex").add_buffer() end, desc = "codex add current buffer" },
+      { "<leader>axs", function() require("codex").send_selection() end, mode = "v", desc = "codex send selection" },
     },
   },
 

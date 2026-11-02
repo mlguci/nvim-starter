@@ -53,6 +53,11 @@ map("n", "<leader>bD", function()
   require("nvchad.tabufline").close_buffer(buf)
 end, { desc = "buffer close (discard changes)" })
 
+-- Modified buffers still get the usual save prompt (tabufline uses `confirm bd`).
+map("n", "<leader>ba", function()
+  require("nvchad.tabufline").closeAllBufs()
+end, { desc = "buffer close all" })
+
 -- <leader>c -- code / LSP (format was <leader>fm, which sat under the find
 -- group; the diagnostic loclist was <leader>ds, which made <leader>d a
 -- two-purpose group). The buffer-local LSP maps of the group -- cr, ct, cw* --
