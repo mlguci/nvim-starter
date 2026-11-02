@@ -2,6 +2,12 @@ return {
   defaults = { lazy = true },
   install = { colorscheme = { "nvchad" } },
 
+  -- Keep the spec reload on config edits, drop its "Config Change Detected"
+  -- notice. With no notification UI installed, vim.notify writes to the
+  -- message area, and that notice landing there was a hit-enter prompt on
+  -- every save of a file under this config.
+  change_detection = { notify = false },
+
   ui = {
     icons = {
       ft = "",
