@@ -83,6 +83,12 @@ function M.apply(path)
     cmd,
     { text = true },
     vim.schedule_wrap(function(out)
+      -- README.md, .chezmoiignore and the like live in the source directory but
+      -- have no target in $HOME, so there is nothing to apply.
+      if path and (out.stderr or ""):find("not in source state", 1, true) then
+        return
+      end
+
       if out.code ~= 0 then
         vim.notify("chezmoi apply failed\n" .. (out.stderr or ""), vim.log.levels.ERROR)
       else
