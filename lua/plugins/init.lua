@@ -45,6 +45,18 @@ return {
         module = "lazydev.integrations.blink",
         score_offset = 100,
       }
+
+      -- <C-j>/<C-k> move the selection, as they do in the telescope and snacks
+      -- pickers. `fallback` matters in both modes: with no menu open, insert
+      -- mode gets NvChad's <Down>/<Up> and the command line keeps its own <C-j>
+      -- (run the command) and <C-k> (digraph). This replaces the preset's <C-k>
+      -- signature toggle, which is inert anyway while signature.enabled is off.
+      local move = {
+        ["<C-j>"] = { "select_next", "fallback" },
+        ["<C-k>"] = { "select_prev", "fallback" },
+      }
+      opts.keymap = vim.tbl_extend("force", opts.keymap, move)
+      opts.cmdline.keymap = vim.tbl_extend("force", opts.cmdline.keymap or {}, move)
       return opts
     end,
   },
