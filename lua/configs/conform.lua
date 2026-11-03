@@ -1,7 +1,13 @@
 local options = {
   formatters_by_ft = {
     lua = { "stylua" },
-    markdown = { "prettier", "markdownlint-cli2" },
+    -- rumdl applies its rule fixes (list markers, blank lines, headings,
+    -- table alignment) with the config lua/rumdl.lua picks. `injected` then
+    -- hands every fenced code block whose language has an entry in this table
+    -- to that formatter (stylua, ruff, clang-format, gersemi), through
+    -- treesitter's markdown injections. The rules rumdl cannot fix come from its
+    -- language server as diagnostics (lua/configs/lspconfig.lua).
+    markdown = { "rumdl", "injected" },
     -- css = { "prettier" },
     -- html = { "prettier" },
 
@@ -25,13 +31,27 @@ local options = {
     python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
   },
 
-  formatters = {},
+  formatters = {
+    -- `--config` is a global flag, so it goes before conform's `fmt ...`.
+    rumdl = {
+      prepend_args = function(_, ctx)
+        return require("rumdl").config_args(ctx.dirname)
+      end,
+    },
+  },
 
-  -- format_on_save = {
-  --   -- These options will be passed to conform.format()
-  --   timeout_ms = 500,
-  --   lsp_fallback = true,
-  -- },
+  -- Every filetype above is formatted on save, which for Python means ruff_fix
+  -- too: an import that is unused at the moment of saving is removed.
+  -- :FormatDisable (global) or :FormatDisable! (this buffer) turns it off, and
+  -- <leader>cF toggles the global switch (lua/mappings.lua). 1000 ms rather than
+  -- conform's 500 because a markdown buffer runs one formatter per code block
+  -- on top of rumdl.
+  format_on_save = function(bufnr)
+    if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+      return
+    end
+    return { timeout_ms = 1000, lsp_format = "fallback" }
+  end,
 }
 
 -- A notebook is a Python buffer whose name ends in .ipynb: jupytext.nvim

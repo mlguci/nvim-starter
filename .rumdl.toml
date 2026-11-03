@@ -1,0 +1,21 @@
+# Fallback rumdl config, for markdown files that have no rumdl or markdownlint
+# config of their own above them (see lua/rumdl.lua). rumdl formats on save
+# (lua/configs/conform.lua) and reports the rest as diagnostics through its
+# language server (lua/configs/lspconfig.lua). Every rule not named here stays
+# on rumdl's default.
+
+[global]
+# Notes are soft-wrapped (lua/autocmds.lua), so a long line is not a problem.
+disable = ["MD013"]
+# Report these, but never fix them on save. Their fixes change what the
+# document says, not just how it is laid out: MD001 and MD025 move headings to
+# other levels, and MD036 turns a bold line into a heading.
+unfixable = ["MD001", "MD025", "MD036"]
+
+# Tables: pad the cells so the pipes line up, unless the aligned table would be
+# wider than 80 columns. A wider table keeps plain `| a | b |` rows, which stay
+# readable when soft-wrapped. MD060 is off by default in rumdl.
+[MD060]
+enabled = true
+style = "aligned"
+max-width = 80

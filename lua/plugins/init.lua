@@ -1,7 +1,9 @@
 return {
+  -- Formats on save (see format_on_save in the options) and on <leader>cf.
   {
     "stevearc/conform.nvim",
-    -- event = 'BufWritePre', -- uncomment for format on save
+    event = "BufWritePre",
+    cmd = "ConformInfo",
     opts = require "configs.conform",
   },
 

@@ -68,8 +68,28 @@ unmap("n", "<leader>ds")
 map("n", "<leader>cd", vim.diagnostic.setloclist, { desc = "LSP diagnostic loclist" })
 
 map({ "n", "x" }, "<leader>cf", function()
-  require("conform").format { lsp_fallback = true }
+  require("conform").format { lsp_format = "fallback" }
 end, { desc = "general format file" })
+
+-- Format on save (lua/configs/conform.lua) checks these two flags. The global
+-- one is what <leader>cF flips; the bang form of the commands is per buffer.
+vim.api.nvim_create_user_command("FormatDisable", function(args)
+  if args.bang then
+    vim.b.disable_autoformat = true
+  else
+    vim.g.disable_autoformat = true
+  end
+end, { bang = true, desc = "Stop formatting on save (! for this buffer only)" })
+
+vim.api.nvim_create_user_command("FormatEnable", function()
+  vim.b.disable_autoformat = false
+  vim.g.disable_autoformat = false
+end, { desc = "Format on save again" })
+
+map("n", "<leader>cF", function()
+  vim.g.disable_autoformat = not vim.g.disable_autoformat
+  vim.notify("Format on save " .. (vim.g.disable_autoformat and "off" or "on"))
+end, { desc = "general toggle format on save" })
 
 map({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP code action" })
 

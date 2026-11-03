@@ -18,13 +18,12 @@ Everything below is a host dependency. The plugins are pinned in
 but nothing in this repo can install a system package for you.
 
 ```sh
-brew install neovim git ripgrep fd node python@3.13 cmake ninja llvm uv chezmoi pandoc jq
+brew install neovim git ripgrep fd python@3.13 cmake ninja llvm uv chezmoi pandoc jq
 ```
 
 | Formula | Needed by |
 | --- | --- |
 | `ripgrep`, `fd` | the `<leader>f` and `<leader>p` pickers — telescope's `live_grep` and `find_files` shell out to them |
-| `node` | Mason's npm packages (prettier, markdownlint-cli2) |
 | `python@3.13` | Mason's PyPI packages (clang-format, gersemi), which it installs into a venv |
 | `cmake`, `ninja` | the `<leader>cm` workflow. `lua/configs/cmake.lua` sets `CMAKE_GENERATOR=Ninja` |
 | `llvm` | clangd. `lua/configs/lspconfig.lua` prefers Homebrew's build (23.x) over the Apple one that wins on `PATH` (21.x), and falls back to bare `clangd` when it is absent — so this is the one entry that is a preference rather than a hard requirement. Its `llvm-cxxfilt` demangles the `<leader>cs` assembly view, with the system `c++filt` as the fallback |
@@ -77,7 +76,7 @@ the Mason step genuinely has to be asked for.
 
 ## Layout
 
-```
+```text
 init.lua              lazy bootstrap, NvChad spec, load order
 lua/
   chadrc.lua          NvChad overrides: theme, winbar colours, statusline, nvdash
@@ -90,7 +89,9 @@ lua/
   python.lua          which interpreter a buffer runs on (.venv lookup), # %% cells, the host venv
   docs.lua            DevDocs picker, grep, float viewer and HTML -> markdown conversion
   asm.lua             godbolt-style assembly view, compiled locally from compile_commands.json
+  rumdl.lua           which config the markdown formatter and linter run with
 pandoc/devdocs.lua    pandoc filter for that conversion: HTML-only tables etc. into markdown
+.rumdl.toml           fallback rumdl rules for markdown whose project has none
   plugins/            lazy specs, one file per concern
   configs/            plugin options, required from the specs
 ```
@@ -104,25 +105,25 @@ Two conventions worth knowing before editing:
   handed, or restate NvChad's defaults — see the comments on the blink,
   telescope and treesitter fragments in `lua/plugins/init.lua`.
 - **`lua/configs/*.lua` are plain modules**, `require`d from the spec that owns
-  them. They hold the *why*; the specs hold the loading conditions and keys.
+  them. They hold the _why_; the specs hold the loading conditions and keys.
 
 ## Keymaps
 
 Leader is `<Space>`. `<leader>?K` lists everything; the groups are:
 
-| Prefix | Group | Prefix | Group |
-| --- | --- | --- | --- |
-| `a` | Claude | `i` | Python REPL (iron) |
-| `b` | Buffers | `j` | Jupyter (molten) |
-| `c` | Code / LSP | `m` | Markdown |
-| `cm` | CMake | `p` | Projects |
-| `cw` | Workspace folders (LSP buffers) | `q` | Quit |
-| `C` | Chezmoi | `r` | Remote (remote-nvim) |
-| `d` | Debug | `t` | Terminal |
-| `f` | Find | `T` | Tests (neotest) |
-| `g` | Git | `u` | UI toggles |
-| `h` | Docs (DevDocs) | `w` | Windows |
-| | | `?` | Keymaps |
+| Prefix | Group                           | Prefix | Group                |
+| ------ | ------------------------------- | ------ | -------------------- |
+| `a`    | Claude                          | `i`    | Python REPL (iron)   |
+| `b`    | Buffers                         | `j`    | Jupyter (molten)     |
+| `c`    | Code / LSP                      | `m`    | Markdown             |
+| `cm`   | CMake                           | `p`    | Projects             |
+| `cw`   | Workspace folders (LSP buffers) | `q`    | Quit                 |
+| `C`    | Chezmoi                         | `r`    | Remote (remote-nvim) |
+| `d`    | Debug                           | `t`    | Terminal             |
+| `f`    | Find                            | `T`    | Tests (neotest)      |
+| `g`    | Git                             | `u`    | UI toggles           |
+| `h`    | Docs (DevDocs)                  | `w`    | Windows              |
+|        |                                 | `?`    | Keymaps              |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in
@@ -134,6 +135,22 @@ or open a tab). `<leader>ww` is a window mode that keeps the `<C-w>` menu open
 until `<Esc>`, so resizing and moving windows doesn't need repeated chords. `<A-m>` or
 `<leader>wm` maximizes and restores, and `<C-A-h/j/k/l>` resizes by 5, also from
 inside a terminal.
+
+## Formatting
+
+Saving a buffer formats it with conform (`lua/configs/conform.lua`). That
+includes Python, where `ruff_fix` removes imports that are unused at the moment
+you save. `:FormatDisable` turns it off globally and `:FormatDisable!` for the
+current buffer. `:FormatEnable` turns both back on, and `<leader>cF` toggles the
+global switch. `<leader>cf` formats on demand.
+
+Markdown is formatted by [rumdl](https://github.com/rvben/rumdl), which applies
+the fixes for the markdownlint rules. Then `injected` formats each fenced code
+block with the formatter for its language. A table is aligned when it fits in
+80 columns and left unpadded when it would not. rumdl's language server reports
+the rules it cannot fix as diagnostics. rumdl uses a project's own rumdl or
+markdownlint config when there is one, and otherwise this repo's `.rumdl.toml`
+(`lua/rumdl.lua`).
 
 ## Maintenance
 

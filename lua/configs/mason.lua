@@ -17,12 +17,12 @@
 local M = {}
 
 M.ensure_installed = {
-  -- Formatters, in the order lua/configs/conform.lua asks for them. clang-format
-  -- and gersemi come from PyPI and prettier and markdownlint-cli2 from npm, so
-  -- these four are the reason the host needs python3 and node (see README).
+  -- Formatters, in the order lua/configs/conform.lua asks for them. rumdl is
+  -- also the markdown language server in lua/configs/lspconfig.lua.
+  -- clang-format and gersemi come from PyPI, so they are the reason the host
+  -- needs python3 (see README).
   "stylua",
-  "prettier",
-  "markdownlint-cli2",
+  "rumdl",
   "clang-format",
   "gersemi",
 

@@ -117,7 +117,19 @@ vim.lsp.config("basedpyright", {
   },
 })
 
-local servers = { "marksman", "clangd", "neocmake", "taplo", "basedpyright", "ruff" }
+-- rumdl's server reports the markdown rules it cannot fix on save (duplicate
+-- headings, skipped heading levels, bare URLs, ...). marksman stays alongside it
+-- for links, references and the document outline. The command is built per
+-- root because a fallback config can only be handed over as an argument, and
+-- only when the project has none (lua/rumdl.lua).
+vim.lsp.config("rumdl", {
+  cmd = function(dispatchers, config)
+    local cmd = vim.list_extend({ "rumdl", "server" }, require("rumdl").config_args(config.root_dir))
+    return vim.lsp.rpc.start(cmd, dispatchers)
+  end,
+})
+
+local servers = { "marksman", "rumdl", "clangd", "neocmake", "taplo", "basedpyright", "ruff" }
 vim.lsp.enable(servers)
 
 -- read :h vim.lsp.config for changing options of lsp servers
