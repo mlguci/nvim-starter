@@ -20,6 +20,15 @@ M.base46 = {
   hl_override = {
     WinBar = { fg = "black", bg = "orange", bold = true },
     WinBarNC = { fg = "grey_fg", bg = "NONE" },
+
+    -- Picker edges. nord's backgrounds sit too close together to separate a
+    -- float by fill (darker_black on black is 1.06:1), so M.ui.telescope below
+    -- switches to drawn borders, and these lift them from the style's one_bg3
+    -- (1.52:1) to nord_blue (4.64:1).
+    TelescopeBorder = { fg = "nord_blue" },
+    TelescopePromptBorder = { fg = "nord_blue" },
+    SnacksPickerBorder = { fg = "nord_blue" },
+    SnacksPickerInputBorder = { fg = "nord_blue" },
   },
 
   -- The Claude sidebar is a snacks window, and snacks remaps WinBar/WinBarNC
@@ -88,6 +97,10 @@ local function stl_literal(s)
 end
 
 M.ui = {
+  -- Read by base46's telescope and snacks integrations alike, at compile time:
+  -- changing it takes `:Lazy build base46` or a theme switch through <leader>ut.
+  telescope = { style = "bordered" },
+
   statusline = {
     -- NvChad's own "default" theme order (nvchad/stl/utils.lua) with "cmake"
     -- and "python" spliced in before the diagnostics counter -- at most one of

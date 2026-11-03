@@ -13,6 +13,11 @@ vim.o.cursorlineopt = "both"
 -- "Floating windows do not use the global value of 'winbar'" (:help 'winbar').
 vim.o.winbar = "%!v:lua.require('winbar').render()"
 
+-- A border on every float that does not ask for its own -- LSP hover, signature
+-- help, diagnostics. Their NormalFloat fill is all but invisible against nord's
+-- editor background (see the hl_override note in lua/chadrc.lua).
+vim.o.winborder = "rounded"
+
 -- Folds come from the syntax tree rather than from hand-made ones. 'foldmethod'
 -- starts out "manual", which in practice means no folds at all -- nothing here
 -- ever ran `zf`, so `za` on a function body did nothing. treesitter already has
