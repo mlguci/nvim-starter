@@ -45,6 +45,7 @@ M.base46 = {
     -- instead (4.8:1): it is a filled cell that is always on screen, and a
     -- second yellow block would compete with the current-tab marker above.
     TbBufOffModified = { fg = "yellow" },
+    TbBufOnModified = { fg = "yellow" }, -- green by default; one colour for unsaved
     TbBufOnClose = { fg = "yellow" },
     TbCloseAllBufsBtn = { bg = "nord_blue" },
   },
