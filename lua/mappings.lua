@@ -264,11 +264,16 @@ map("n", "<leader>lL", function()
 end, { desc = "tab move right" })
 
 for nr = 1, 9 do
-  map("n", "<leader>l" .. nr, function()
+  local function go()
     if nr <= vim.fn.tabpagenr "$" then
       vim.cmd.tabnext(nr)
     end
-  end, { desc = "tab go to " .. nr })
+  end
+
+  map("n", "<leader>l" .. nr, go, { desc = "tab go to " .. nr })
+  if nr <= 8 then
+    map({ "n", "t" }, "<A-" .. nr .. ">", go, { desc = "tab go to " .. nr })
+  end
 end
 
 -- <leader>C -- chezmoi. The picker and :ChezmoiEdit halves of the group are

@@ -139,8 +139,9 @@ inside a terminal.
 Tab pages: `<leader>l` treats them as layouts, each with its own windows and
 its own buffer row in tabufline. `<leader>ln` opens one, `<leader>ld` closes it
 and `<leader>lo` closes the others. `<leader>lh`/`<leader>ll` go to the previous
-and next, `<leader>l1`–`<leader>l9` jump by number, and `<leader>lH`/`<leader>lL`
-reorder. `<leader>lw` moves the current window into a tab page of its own.
+and next, `<leader>l1`–`<leader>l9` jump by number, as do `<A-1>`–`<A-8>`, also
+from inside a terminal, and `<leader>lH`/`<leader>lL` reorder. `<leader>lw` moves
+the current window into a tab page of its own.
 
 ## Formatting
 
