@@ -100,6 +100,8 @@ return {
         { "<leader>i", group = "Python REPL", icon = { icon = "", color = "yellow" }, mode = { "n", "x" } },
         -- jc, jd, jh, ji, jI, jl, jo, jr, jR, jv (jv is visual) -- lua/plugins/python.lua
         { "<leader>j", group = "Jupyter", icon = { icon = "󰠮", color = "orange" }, mode = { "n", "x" } },
+        -- ld, lh, lH, ll, lL, ln, lo, lw, l1-l9
+        { "<leader>l", group = "Tab pages", icon = { icon = "󰓩", color = "blue" } },
         { "<leader>m", group = "Markdown", icon = { icon = "", color = "grey" } }, -- mp, mr
         -- pb, pD, pd, pl, pp, pr, pS, ps
         { "<leader>p", group = "Projects", icon = { icon = "󰃖", color = "purple" } },

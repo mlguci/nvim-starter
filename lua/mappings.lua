@@ -235,6 +235,42 @@ map({ "n", "t" }, "<C-A-l>", resize("width", 5), { desc = "window wider" })
 map({ "n", "t" }, "<C-A-j>", resize("height", -5), { desc = "window shorter" })
 map({ "n", "t" }, "<C-A-k>", resize("height", 5), { desc = "window taller" })
 
+-- <leader>l -- tab pages, used as layouts: each keeps its own windows and, through
+-- tabufline (vim.t.bufs), its own buffer list. <Tab> cycles buffers, not these.
+map("n", "<leader>ln", "<cmd>tabnew<CR>", { desc = "tab new" })
+map("n", "<leader>ll", "<cmd>tabnext<CR>", { desc = "tab next" })
+map("n", "<leader>lh", "<cmd>tabprevious<CR>", { desc = "tab previous" })
+map("n", "<leader>lo", "<cmd>tabonly<CR>", { desc = "tab close others" })
+map("n", "<leader>lw", "<C-w>T", { desc = "tab from current window" })
+
+-- :tabclose on the last tab page and :tabmove past either end are errors, and a
+-- count past the last tab page is one too: nothing to do in any of those cases.
+map("n", "<leader>ld", function()
+  if vim.fn.tabpagenr "$" > 1 then
+    vim.cmd "tabclose"
+  end
+end, { desc = "tab close" })
+
+map("n", "<leader>lH", function()
+  if vim.fn.tabpagenr() > 1 then
+    vim.cmd "-tabmove"
+  end
+end, { desc = "tab move left" })
+
+map("n", "<leader>lL", function()
+  if vim.fn.tabpagenr() < vim.fn.tabpagenr "$" then
+    vim.cmd "+tabmove"
+  end
+end, { desc = "tab move right" })
+
+for nr = 1, 9 do
+  map("n", "<leader>l" .. nr, function()
+    if nr <= vim.fn.tabpagenr "$" then
+      vim.cmd.tabnext(nr)
+    end
+  end, { desc = "tab go to " .. nr })
+end
+
 -- <leader>C -- chezmoi. The picker and :ChezmoiEdit halves of the group are
 -- keys on the chezmoi.nvim spec in lua/plugins/init.lua; these two only shell
 -- out to the chezmoi binary, so they stay here instead of lazy-loading a plugin

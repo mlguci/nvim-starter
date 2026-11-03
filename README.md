@@ -113,8 +113,8 @@ Leader is `<Space>`. `<leader>?K` lists everything; the groups are:
 
 | Prefix | Group                           | Prefix | Group                |
 | ------ | ------------------------------- | ------ | -------------------- |
-| `a`    | Claude                          | `i`    | Python REPL (iron)   |
-| `b`    | Buffers                         | `j`    | Jupyter (molten)     |
+| `a`    | Claude                          | `j`    | Jupyter (molten)     |
+| `b`    | Buffers                         | `l`    | Tab pages            |
 | `c`    | Code / LSP                      | `m`    | Markdown             |
 | `cm`   | CMake                           | `p`    | Projects             |
 | `cw`   | Workspace folders (LSP buffers) | `q`    | Quit                 |
@@ -123,7 +123,7 @@ Leader is `<Space>`. `<leader>?K` lists everything; the groups are:
 | `f`    | Find                            | `T`    | Tests (neotest)      |
 | `g`    | Git                             | `u`    | UI toggles           |
 | `h`    | Docs (DevDocs)                  | `w`    | Windows              |
-|        |                                 | `?`    | Keymaps              |
+| `i`    | Python REPL (iron)              | `?`    | Keymaps              |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in
@@ -135,6 +135,12 @@ or open a tab). `<leader>ww` is a window mode that keeps the `<C-w>` menu open
 until `<Esc>`, so resizing and moving windows doesn't need repeated chords. `<A-m>` or
 `<leader>wm` maximizes and restores, and `<C-A-h/j/k/l>` resizes by 5, also from
 inside a terminal.
+
+Tab pages: `<leader>l` treats them as layouts, each with its own windows and
+its own buffer row in tabufline. `<leader>ln` opens one, `<leader>ld` closes it
+and `<leader>lo` closes the others. `<leader>lh`/`<leader>ll` go to the previous
+and next, `<leader>l1`–`<leader>l9` jump by number, and `<leader>lH`/`<leader>lL`
+reorder. `<leader>lw` moves the current window into a tab page of its own.
 
 ## Formatting
 
