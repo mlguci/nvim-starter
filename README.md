@@ -121,11 +121,19 @@ Leader is `<Space>`. `<leader>?K` lists everything; the groups are:
 | `d` | Debug | `t` | Terminal |
 | `f` | Find | `T` | Tests (neotest) |
 | `g` | Git | `u` | UI toggles |
-| `h` | Docs (DevDocs) | `?` | Keymaps |
+| `h` | Docs (DevDocs) | `w` | Windows |
+| | | `?` | Keymaps |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in
 sync with `lua/mappings.lua`.
+
+Windows: opening a file from nvim-tree reuses the editor window you were last
+in, with no window-letter prompt (`<C-v>`/`<C-x>`/`<C-t>` in the tree still split
+or open a tab). `<leader>ww` is a window mode that keeps the `<C-w>` menu open
+until `<Esc>`, so resizing and moving windows doesn't need repeated chords. `<A-m>` or
+`<leader>wm` maximizes and restores, and `<C-A-h/j/k/l>` resizes by 5, also from
+inside a terminal.
 
 ## Maintenance
 

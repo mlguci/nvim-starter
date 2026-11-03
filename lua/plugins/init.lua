@@ -96,6 +96,8 @@ return {
         -- Ta, Td, Tf, Tl, Tn, To, TO, Ts, Tw, Tx (neotest) -- lua/plugins/python.lua
         { "<leader>T", group = "Tests", icon = { icon = "󰙨", color = "green" } },
         { "<leader>u", group = "UI toggles" }, -- uh, un, ur, ut
+        -- wd, wm, wo, ws, wv, ww, wx, w=, wH, wJ, wK, wL -- helpers in lua/windows.lua
+        { "<leader>w", group = "Windows" },
       },
     },
   },
@@ -401,6 +403,17 @@ return {
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
+      -- Open files in the editor window last used instead of prompting for a
+      -- letter whenever two or more windows qualify. lua/windows.lua.
+      actions = {
+        open_file = {
+          window_picker = {
+            picker = function()
+              return require("windows").pick_for_tree()
+            end,
+          },
+        },
+      },
       renderer = {
         highlight_git = "name", -- color the filename instead of relying only on the icon
         icons = {

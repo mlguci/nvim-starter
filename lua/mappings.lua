@@ -151,15 +151,69 @@ map("n", "<leader>uh", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = 0 }, { bufnr = 0 })
 end, { desc = "toggle inlay hints" })
 
+-- <leader>w -- windows (NvChad's <leader>wk/wK moved to <leader>?, above).
+-- Helpers in lua/windows.lua.
 map({ "n", "t" }, "<A-m>", function()
-  if vim.t.restore_cmd then
-    vim.cmd(vim.t.restore_cmd)
-    vim.t.restore_cmd = nil
-  else
-    vim.t.restore_cmd = vim.fn.winrestcmd()
-    vim.cmd "wincmd _ | wincmd |"
-  end
+  require("windows").toggle_maximize()
 end, { desc = "window toggle maximize" })
+
+map("n", "<leader>wm", function()
+  require("windows").toggle_maximize()
+end, { desc = "window toggle maximize" })
+
+map("n", "<leader>w=", function()
+  require("windows").equalize()
+end, { desc = "window equalize sizes" })
+
+-- Window mode: which-key keeps the <C-w> menu open after every key, so
+-- `> > + + x` is one session instead of five <C-w> chords. <Esc> leaves.
+map("n", "<leader>ww", function()
+  require("which-key").show { keys = "<c-w>", loop = true }
+end, { desc = "window mode (repeat <C-w> keys)" })
+
+-- The <C-w> pair too, so splitting from the tree in window mode behaves the same.
+for _, lhs in ipairs { "<leader>wv", "<C-w>v" } do
+  map("n", lhs, function()
+    require("windows").split "vsplit"
+  end, { desc = "window split vertical" })
+end
+
+for _, lhs in ipairs { "<leader>ws", "<C-w>s" } do
+  map("n", lhs, function()
+    require("windows").split "split"
+  end, { desc = "window split horizontal" })
+end
+
+map("n", "<leader>wd", "<cmd>close<CR>", { desc = "window close" })
+map("n", "<leader>wo", "<cmd>only<CR>", { desc = "window close others" })
+map("n", "<leader>wx", "<C-w>x", { desc = "window exchange with next" })
+map("n", "<leader>wH", "<C-w>H", { desc = "window move far left" })
+map("n", "<leader>wJ", "<C-w>J", { desc = "window move to bottom" })
+map("n", "<leader>wK", "<C-w>K", { desc = "window move to top" })
+map("n", "<leader>wL", "<C-w>L", { desc = "window move far right" })
+
+-- Resize in steps of 5 rather than 1, both as <C-w> chords (which is what
+-- window mode repeats) and directly on <C-A-hjkl>, which also works from inside
+-- a terminal such as the Claude sidebar. h/l narrow/widen, j/k shrink/grow.
+local function resize(dim, delta)
+  return function()
+    local win = vim.api.nvim_get_current_win()
+    if dim == "width" then
+      vim.api.nvim_win_set_width(win, math.max(1, vim.api.nvim_win_get_width(win) + delta))
+    else
+      vim.api.nvim_win_set_height(win, math.max(1, vim.api.nvim_win_get_height(win) + delta))
+    end
+  end
+end
+
+map("n", "<C-w><", resize("width", -5), { desc = "window narrower" })
+map("n", "<C-w>>", resize("width", 5), { desc = "window wider" })
+map("n", "<C-w>-", resize("height", -5), { desc = "window shorter" })
+map("n", "<C-w>+", resize("height", 5), { desc = "window taller" })
+map({ "n", "t" }, "<C-A-h>", resize("width", -5), { desc = "window narrower" })
+map({ "n", "t" }, "<C-A-l>", resize("width", 5), { desc = "window wider" })
+map({ "n", "t" }, "<C-A-j>", resize("height", -5), { desc = "window shorter" })
+map({ "n", "t" }, "<C-A-k>", resize("height", 5), { desc = "window taller" })
 
 -- <leader>C -- chezmoi. The picker and :ChezmoiEdit halves of the group are
 -- keys on the chezmoi.nvim spec in lua/plugins/init.lua; these two only shell

@@ -205,3 +205,7 @@ end, { desc = "Install every mason package this config needs" })
 -- first file of the session, and the restore has to happen on VimEnter whether or
 -- not persistence.nvim has been reached yet. lua/project.lua explains both.
 require("project").setup()
+
+-- Tracks the last editor window, which nvim-tree opens files into instead of
+-- asking. Has to see window switches from startup on. lua/windows.lua.
+require("windows").setup()
