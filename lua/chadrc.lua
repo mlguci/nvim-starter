@@ -29,6 +29,24 @@ M.base46 = {
     TelescopePromptBorder = { fg = "nord_blue" },
     SnacksPickerBorder = { fg = "nord_blue" },
     SnacksPickerInputBorder = { fg = "nord_blue" },
+
+    -- Current tab page. base46 marks it with red text on black, and a weak red
+    -- response makes that the dimmest cell in the row (about 2.5:1, against
+    -- 5.3:1 for the tabs it should stand out from), with a fill that barely
+    -- leaves the bar (black on black2 is 1.09:1). Yellow carries the cue on
+    -- brightness instead of hue, so it holds up without red: about 7.5:1 for
+    -- the digit and 6.8:1 for the fill against the bar. Compiled into the
+    -- cache like the rest of this table: `:Lazy build base46` to see a change.
+    TbTabOn = { fg = "black", bg = "yellow", bold = true },
+
+    -- The other reds in that row, which fail the same way: about 2.3-2.5:1
+    -- without a red response. The unsaved dot and the close icon are small
+    -- glyphs, so they take yellow as text. The close-all button takes nord_blue
+    -- instead (4.8:1): it is a filled cell that is always on screen, and a
+    -- second yellow block would compete with the current-tab marker above.
+    TbBufOffModified = { fg = "yellow" },
+    TbBufOnClose = { fg = "yellow" },
+    TbCloseAllBufsBtn = { bg = "nord_blue" },
   },
 
   -- The Claude sidebar is a snacks window, and snacks remaps WinBar/WinBarNC
