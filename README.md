@@ -4,8 +4,8 @@ A Neovim config built on [NvChad](https://github.com/NvChad/NvChad) v2.5, which
 is used here as a plugin rather than as a framework to live inside: this repo is
 the config, and `init.lua` pulls NvChad in as the first spec.
 
-Oriented around four things — C/C++ with CMake, Python with uv, markdown notes,
-and dotfiles managed by chezmoi — plus a project switcher that restores a session, a file
+Oriented around five things — C/C++ with CMake, Python with uv, profiling, markdown
+notes, and dotfiles managed by chezmoi — plus a project switcher that restores a session, a file
 tree and a task list per project.
 
 ## Prerequisites
@@ -44,6 +44,32 @@ afterwards to sign in. Until it is installed, the `<leader>ax` maps only warn:
 ```sh
 npm i -g @openai/codex   # or: brew install codex
 ```
+
+Profiling (`<leader>P`) needs its own tools on either system. `:checkhealth profiling`
+reports what is missing and how to fix it. On macOS:
+
+```sh
+brew install samply hyperfine py-spy tracy google-benchmark
+cargo install --locked inferno   # Python flamegraphs
+samply setup                     # once, and after each samply update: lets <leader>Pa attach
+```
+
+Full Xcode, not only the Command Line Tools, adds `<leader>PR` and `<leader>PM`, and
+`sudo DevToolsSecurity -enable` stops their admin password prompt.
+
+On Ubuntu 26.04, where neither samply, py-spy nor a flamegraph renderer is packaged:
+
+```sh
+sudo apt install linux-tools-common linux-tools-$(uname -r) heaptrack heaptrack-gui \
+  valgrind hyperfine clang llvm libbenchmark-dev libstdc++-16-dev cargo
+cargo install --locked samply py-spy inferno
+sudo sysctl kernel.perf_event_paranoid=1
+```
+
+`libstdc++-16-dev` is not optional: clang picks the newest GCC directory it finds, so
+without those headers it cannot find `<vector>`. The `sysctl` lasts until reboot.
+Ubuntu's default of 4 blocks samply and `perf`, and this config reports that but never
+changes it. To keep the setting, put it in `/etc/sysctl.d/`.
 
 Remote editing (`<leader>r`, `lua/plugins/remote.lua`) needs nothing extra on
 this machine beyond `ssh` and kitty, which the remote UI opens in. The remote
@@ -89,6 +115,7 @@ lua/
   python.lua          which interpreter a buffer runs on (.venv lookup), # %% cells, the host venv
   docs.lua            DevDocs picker, grep, float viewer and HTML -> markdown conversion
   asm.lua             godbolt-style assembly view, compiled locally from compile_commands.json
+  profiling/          record, convert and show profiles. platform.lua holds every OS difference
   rumdl.lua           which config the markdown formatter and linter run with
 pandoc/devdocs.lua    pandoc filter for that conversion: HTML-only tables etc. into markdown
 .rumdl.toml           fallback rumdl rules for markdown whose project has none
@@ -124,6 +151,7 @@ Leader is `<Space>`. `<leader>?K` lists everything; the groups are:
 | `g`    | Git                             | `u`    | UI toggles           |
 | `h`    | Docs (DevDocs)                  | `w`    | Windows              |
 | `i`    | Python REPL (iron)              | `?`    | Keymaps              |
+| `P`    | Profile                         |        |                      |
 
 The group definitions live in the which-key spec in `lua/plugins/init.lua`,
 which also lists the members of each group in a trailing comment — keep those in
@@ -142,6 +170,52 @@ and `<leader>lo` closes the others. `<leader>lh`/`<leader>ll` go to the previous
 and next, `<leader>l1`–`<leader>l9` jump by number, as do `<A-1>`–`<A-8>`, also
 from inside a terminal, and `<leader>lH`/`<leader>lL` reorder. `<leader>lw` moves
 the current window into a tab page of its own.
+
+## Profiling
+
+`<leader>Pr` builds the current target, records it, and shows each line's share of the
+run beside the source. The target is the CMake launch target, the Cargo binary in a
+Rust buffer, or the script in a Python buffer. Recordings go to `.profiles/` at the
+project root, so add that to the project's `.gitignore`. Profile an optimised build
+with debug info: `<leader>Pr` warns on a Debug build.
+
+samply is the default sampler on macOS and Ubuntu alike, and each adds a deeper backend:
+
+| Capability | macOS | Ubuntu |
+| --- | --- | --- |
+| `Pr` sample, `Pa` attach, `Pv` flamegraph | samply | samply |
+| `Pr` in a Python buffer | py-spy, which asks for sudo | py-spy |
+| `PR` deep recording | Instruments templates | `perf` events |
+| `Pi` open deep recording | Instruments | hotspot, else `samply import` |
+| `Pm` leak check | `leaks` | LeakSanitizer in the ASan build, else valgrind |
+| `PM` heap growth | Instruments Allocations | heaptrack |
+
+| Key | Action |
+| --- | --- |
+| `Pt` | toggle annotations |
+| `Pf` | annotate only the function under the cursor |
+| `Pl` | load an earlier recording |
+| `Pe` | pick the event: CPU or wall time, or a counter |
+| `Ph`, `Ps` | hottest lines, hottest symbols |
+| `Pc` | hottest callers of the function under the cursor |
+| `Pb` | save a baseline, then compare against it with hyperfine |
+| `PB` | compile-time summary from the `timetrace` build (`-ftime-trace`) |
+
+`:ProfileBaseline` replaces a saved baseline.
+
+Annotations count a line's own samples and everything it calls, so a line in `main`
+can read 100%. `cpu time` leaves out time spent blocked, and `wall time` includes it.
+
+Hardware counters differ by platform. `perf` samples on the event itself, which needs
+real hardware: most VMs have no counters, so `PR` falls back to `cpu-clock` and says
+so. macOS gives four CPU bottleneck metrics for each ~1 ms slice, not per-event
+samples. Each slice is charged to the nearest Time Profiler stack, so these events
+are marked `(approx)`: they are reliable per function and approximate per line.
+Instruments' own per-event sampling is not used, because tested against a program
+with a known answer its samples followed time and not the event.
+
+On a host with no display, annotations work as usual, `Pi` is unavailable, and `Pv`
+prints the `ssh -L` command that reaches its server.
 
 ## Formatting
 

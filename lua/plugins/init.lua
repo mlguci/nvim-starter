@@ -103,6 +103,8 @@ return {
         -- ld, lh, lH, ll, lL, ln, lo, lw, l1-l9
         { "<leader>l", group = "Tab pages", icon = { icon = "󰓩", color = "blue" } },
         { "<leader>m", group = "Markdown", icon = { icon = "", color = "grey" } }, -- mp, mr
+        -- Pa, Pb, PB, Pc, Pe, Pf, Ph, Pi, Pl, Pm, PM, Pr, PR, Ps, Pt, Pv -- lua/plugins/profiling.lua
+        { "<leader>P", group = "Profile", icon = { icon = "󰓅", color = "red" } },
         -- pb, pD, pd, pl, pp, pr, pS, ps
         { "<leader>p", group = "Projects", icon = { icon = "󰃖", color = "purple" } },
         -- rc, rd, ri, rl, rs, rS -- lua/plugins/remote.lua
